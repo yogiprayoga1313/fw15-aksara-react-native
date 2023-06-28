@@ -7,8 +7,11 @@ import {
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Feather';
+import {Link} from '@react-navigation/native';
 
-const Register = () => {
+const Register = ({secureTextEntry}) => {
+  const [visible, setVisibility] = React.useState(false);
   const navigation = useNavigation();
   return (
     <View style={style.container}>
@@ -16,24 +19,44 @@ const Register = () => {
         <Text style={style.text1}>Sign Up</Text>
         <View style={style.text}>
           <Text style={style.text2}>Already have an account?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Link to="/Login">
             <Text style={style.text3}>Log In</Text>
-          </TouchableOpacity>
+          </Link>
         </View>
       </View>
       <View style={style.boxContainer}>
         <TextInput style={style.textInput} placeholder="Full Name" />
         <TextInput style={style.textInput} placeholder="Email" />
-        <TextInput
-          style={style.textInput}
-          placeholder="Password"
-          secureTextEntry={true}
-        />
-        <TextInput
-          style={style.textInput}
-          placeholder="Confirm Passowrd"
-          secureTextEntry={true}
-        />
+        <View style={style.textInputPass}>
+          {!secureTextEntry && (
+            <TextInput
+              style={style.inputNew}
+              placeholder="Password"
+              secureTextEntry={!visible}
+            />
+          )}
+          {!secureTextEntry && (
+            <TouchableOpacity onPress={() => setVisibility(!visible)}>
+              {!visible && <Icon size={20} name="eye-off" />}
+              {visible && <Icon size={25} name="eye" />}
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={style.textInputPass}>
+          {!secureTextEntry && (
+            <TextInput
+              style={style.inputNew}
+              placeholder="Confirm Password"
+              secureTextEntry={!visible}
+            />
+          )}
+          {!secureTextEntry && (
+            <TouchableOpacity onPress={() => setVisibility(!visible)}>
+              {!visible && <Icon size={20} name="eye-off" />}
+              {visible && <Icon size={25} name="eye" />}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
       <View>
         <Text style={style.text2}>Accept terms and condition</Text>
@@ -53,6 +76,7 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: 'white',
   },
   text: {
     flexDirection: 'row',
@@ -65,7 +89,7 @@ const style = StyleSheet.create({
   },
   text2: {
     color: 'black',
-    font: 'bold',
+    fontWeight: 'bold',
     fontSize: 15,
   },
   text3: {
@@ -82,6 +106,15 @@ const style = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 15,
   },
+  textInputPass: {
+    opacity: 0.6,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 60,
+  },
   boxContainer: {
     gap: 15,
   },
@@ -97,6 +130,10 @@ const style = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  inputNew: {
+    flex: 1,
+    fontSize: 17,
   },
 });
 

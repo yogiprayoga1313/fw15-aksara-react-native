@@ -11,24 +11,30 @@ import {useNavigation} from '@react-navigation/native';
 const ForgotPassword = () => {
   const navigation = useNavigation();
   return (
-    <View style={style.container}>
-      <View style={style.boxContainer}>
-        <Text style={style.text1}>Forgot Password</Text>
-        <Text style={style.text2}>You’ll get mail soon on your email</Text>
+    <View style={style.containerFp}>
+      <View style={style.container}>
+        <View style={style.boxContainer}>
+          <Text style={style.text1}>Forgot Password</Text>
+          <Text style={style.text2}>You’ll get mail soon on your email</Text>
+        </View>
+        <View>
+          <TextInput style={style.textInput} placeholder="Email" />
+        </View>
+        <TouchableOpacity
+          style={style.button}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={style.buttonText}>Send</Text>
+        </TouchableOpacity>
       </View>
-      <View>
-        <TextInput style={style.textInput} placeholder="Email" />
-      </View>
-      <TouchableOpacity
-        style={style.button}
-        onPress={() => navigation.navigate('Login')}>
-        <Text style={style.buttonText}>Send</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
 const style = StyleSheet.create({
+  containerFp: {
+    backgroundColor: 'white',
+    height: 670,
+  },
   container: {
     gap: 30,
     marginTop: 30,
@@ -42,7 +48,7 @@ const style = StyleSheet.create({
   },
   text2: {
     color: 'black',
-    font: 'bold',
+    fontWeight: 'bold',
     fontSize: 15,
   },
   textInput: {
@@ -54,6 +60,7 @@ const style = StyleSheet.create({
   },
   boxContainer: {
     gap: 15,
+    // backgroundColor: 'white',
   },
   button: {
     justifyContent: 'center',
