@@ -6,11 +6,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import {Link, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconPass from 'react-native-vector-icons/Feather';
+import {login} from '../../redux/reducers/auth';
+import {useDispatch} from 'react-redux';
 
-const Login = () => {
+const Login = ({secureTextEntry}) => {
+  const [visible, setVisibility] = React.useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const doLogin = () => {
+    dispatch(login('abc'));
+  };
+
   return (
     <View style={style.container}>
       <View style={style.boxContainer}>
@@ -19,26 +29,35 @@ const Login = () => {
       </View>
       <View style={style.boxContainer}>
         <TextInput style={style.textInput} placeholder="Email" />
-        <TextInput
-          style={style.textInput}
-          placeholder="Password"
-          secureTextEntry={true}
-        />
+        <View style={style.textInputPassLogin}>
+          {!secureTextEntry && (
+            <TextInput
+              style={style.inputNewLogin}
+              placeholder="Password"
+              secureTextEntry={!visible}
+            />
+          )}
+          {!secureTextEntry && (
+            <TouchableOpacity onPress={() => setVisibility(!visible)}>
+              {!visible && <IconPass size={20} name="eye-off" />}
+              {visible && <IconPass size={25} name="eye" />}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={style.text3}>Forgot Password?</Text>
-        </TouchableOpacity>
+        <Link style={style.text3} to="/ForgotPassword">
+          <Text>Forgot Password?</Text>
+        </Link>
       </View>
-      <TouchableOpacity
-        style={style.button}
-        onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={style.button} onPress={doLogin}>
         <Text style={style.buttonText}>Log In</Text>
       </TouchableOpacity>
       <View style={style.contanerText}>
         <Text>or sign in with</Text>
         <View>
-          <Icon name="google" size={30} color="blue" />
+          <Icon name="google" size={30} color="green" />
+          <Icon name="facebook" size={30} color="blue" />
         </View>
       </View>
     </View>
@@ -51,6 +70,7 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: 'white',
   },
   text1: {
     fontWeight: 'bold',
@@ -65,7 +85,7 @@ const style = StyleSheet.create({
   },
   text2: {
     color: 'black',
-    font: 'bold',
+    fontWeight: 'bold',
     fontSize: 15,
   },
   textInput: {
@@ -95,6 +115,19 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
+  },
+  textInputPassLogin: {
+    opacity: 0.6,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 60,
+  },
+  inputNewLogin: {
+    flex: 1,
+    fontSize: 17,
   },
 });
 
