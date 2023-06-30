@@ -100,9 +100,13 @@ const Login = ({secureTextEntry}) => {
       </Formik>
       <View style={style.contanerText}>
         <Text>or sign in with</Text>
-        <View>
-          <Icon name="google" size={30} color="green" />
-          <Icon name="facebook" size={30} color="blue" />
+        <View style={style.iconCont}>
+          <TouchableOpacity style={style.iconGoogle}>
+            <Icon name="google" size={30} color="green" />
+          </TouchableOpacity>
+          <TouchableOpacity style={style.iconFb}>
+            <Icon name="facebook" size={30} color="blue" />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -159,7 +163,7 @@ const style = StyleSheet.create({
   contanerText: {
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: 20,
   },
   textInputPassLogin: {
     opacity: 0.6,
@@ -176,6 +180,28 @@ const style = StyleSheet.create({
   },
   textErrorMessage: {
     color: 'red',
+  },
+  iconCont: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+  iconGoogle: {
+    borderRadius: 10,
+    borderWidth: 2,
+    width: 100,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: 'blue',
+  },
+  iconFb: {
+    borderRadius: 10,
+    borderWidth: 2,
+    width: 100,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: 'blue',
   },
 });
 

@@ -46,3 +46,48 @@ export const asyncRegister = createAsyncThunk(
     }
   },
 );
+
+export const asyncForgotPassword = createAsyncThunk(
+  'asyncForgotPassword',
+  async (paylaod, {rejectWithValue}) => {
+    try {
+      const form = new URLSearchParams();
+      console.log(paylaod);
+      form.append('email', paylaod.email);
+
+      const {data} = await http().post('/auth/forgotPassword', form.toString());
+      return data.results.token;
+    } catch (err) {
+      const message = err?.response?.data?.message;
+      if (message) {
+        return rejectWithValue(message);
+      } else {
+        return rejectWithValue(err.message);
+      }
+    }
+  },
+);
+
+export const asyncResetPassword = createAsyncThunk(
+  'asyncResetPassword',
+  async (paylaod, {rejectWithValue}) => {
+    try {
+      const form = new URLSearchParams();
+      console.log(paylaod);
+      form.append('code', paylaod.code);
+      form.append('email', paylaod.email);
+      form.append('password', paylaod.password);
+      form.append('confirmPassword', paylaod.confirmPassword);
+
+      const {data} = await http().post('/auth/resetPassword', form.toString());
+      return data.results.token;
+    } catch (err) {
+      const message = err?.response?.data?.message;
+      if (message) {
+        return rejectWithValue(message);
+      } else {
+        return rejectWithValue(err.message);
+      }
+    }
+  },
+);
