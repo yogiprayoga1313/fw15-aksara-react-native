@@ -6,19 +6,26 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {Link, useNavigation} from '@react-navigation/native';
+import {Link} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconPass from 'react-native-vector-icons/Feather';
-import {login} from '../../redux/reducers/auth';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {Formik} from 'formik';
+import {asyncLogin} from '../../redux/actions/auth';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+  email: Yup.string().email('Invalid email address'),
+  password: Yup.string().required('Password cannot be empty'),
+});
 
 const Login = ({secureTextEntry}) => {
   const [visible, setVisibility] = React.useState(false);
-  const navigation = useNavigation();
   const dispatch = useDispatch();
+  const errorMessage = useSelector(state => state.auth.errorMessage);
 
-  const doLogin = () => {
-    dispatch(login('abc'));
+  const doLogin = values => {
+    dispatch(asyncLogin(values));
   };
 
   return (
@@ -27,32 +34,70 @@ const Login = ({secureTextEntry}) => {
         <Text style={style.text1}>Login</Text>
         <Text style={style.text2}>Hi, Welcome back to Urticket! </Text>
       </View>
-      <View style={style.boxContainer}>
-        <TextInput style={style.textInput} placeholder="Email" />
-        <View style={style.textInputPassLogin}>
-          {!secureTextEntry && (
-            <TextInput
-              style={style.inputNewLogin}
-              placeholder="Password"
-              secureTextEntry={!visible}
-            />
-          )}
-          {!secureTextEntry && (
-            <TouchableOpacity onPress={() => setVisibility(!visible)}>
-              {!visible && <IconPass size={20} name="eye-off" />}
-              {visible && <IconPass size={25} name="eye" />}
+      {/* {errorMessage && <Alert variant="error"> {errorMessage}</Alert>} */}
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        onSubmit={doLogin}
+        validationSchema={validationSchema}>
+        {({
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          values,
+          touched,
+          errors,
+        }) => (
+          <>
+            <View style={style.boxContainer}>
+              <TextInput
+                style={style.textInput}
+                placeholder="Email"
+                keyboardType="email-address"
+                onChangeText={handleChange('email')}
+                onBlur={handleBlur('email')}
+                value={values.email}
+              />
+              {errors.email && touched.email && (
+                <Text style={style.textErrorMessage}>{errors.email}</Text>
+              )}
+              {console.log(errors)}
+              <View style={style.textInputPassLogin}>
+                {!secureTextEntry && (
+                  <TextInput
+                    style={style.inputNewLogin}
+                    placeholder="Password"
+                    secureTextEntry={!visible}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                  />
+                )}
+                {!secureTextEntry && (
+                  <TouchableOpacity onPress={() => setVisibility(!visible)}>
+                    {!visible && <IconPass size={20} name="eye-off" />}
+                    {visible && <IconPass size={25} name="eye" />}
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {errors.password && touched.password && (
+                <Text style={style.textErrorMessage}>{errors.password}</Text>
+              )}
+            </View>
+            <View>
+              <Link style={style.text3} to="/ForgotPassword">
+                <Text>Forgot Password?</Text>
+              </Link>
+            </View>
+            <TouchableOpacity style={style.button} onPress={handleSubmit}>
+              <Text style={style.buttonText}>Log In</Text>
             </TouchableOpacity>
-          )}
-        </View>
-      </View>
-      <View>
-        <Link style={style.text3} to="/ForgotPassword">
-          <Text>Forgot Password?</Text>
-        </Link>
-      </View>
-      <TouchableOpacity style={style.button} onPress={doLogin}>
-        <Text style={style.buttonText}>Log In</Text>
-      </TouchableOpacity>
+          </>
+        )}
+      </Formik>
       <View style={style.contanerText}>
         <Text>or sign in with</Text>
         <View>
@@ -128,6 +173,9 @@ const style = StyleSheet.create({
   inputNewLogin: {
     flex: 1,
     fontSize: 17,
+  },
+  textErrorMessage: {
+    color: 'red',
   },
 });
 
