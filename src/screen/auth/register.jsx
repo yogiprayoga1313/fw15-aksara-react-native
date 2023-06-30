@@ -9,10 +9,26 @@ import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import {Link} from '@react-navigation/native';
+import {Formik} from 'formik';
+import {asyncRegister} from '../../redux/actions/auth';
+import {useDispatch} from 'react-redux';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+  email: Yup.string().email('Invalid email address'),
+  password: Yup.string().required('Password cannot be empty'),
+  confirmPassword: Yup.string().required('Password cannot be empty'),
+});
 
 const Register = ({secureTextEntry}) => {
   const [visible, setVisibility] = React.useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const doRegister = values => {
+    dispatch(asyncRegister(values));
+    navigation.navigate('Login');
+  };
   return (
     <View style={style.container}>
       <View style={style.boxContainer}>
@@ -24,48 +40,98 @@ const Register = ({secureTextEntry}) => {
           </Link>
         </View>
       </View>
-      <View style={style.boxContainer}>
-        <TextInput style={style.textInput} placeholder="Full Name" />
-        <TextInput style={style.textInput} placeholder="Email" />
-        <View style={style.textInputPass}>
-          {!secureTextEntry && (
-            <TextInput
-              style={style.inputNew}
-              placeholder="Password"
-              secureTextEntry={!visible}
-            />
-          )}
-          {!secureTextEntry && (
-            <TouchableOpacity onPress={() => setVisibility(!visible)}>
-              {!visible && <Icon size={20} name="eye-off" />}
-              {visible && <Icon size={25} name="eye" />}
+      <Formik
+        initialValues={{
+          fullName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        }}
+        validationSchema={validationSchema}
+        onSubmit={doRegister}>
+        {({
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          values,
+          touched,
+          errors,
+        }) => (
+          <>
+            <View style={style.boxContainer}>
+              <TextInput
+                style={style.textInput}
+                placeholder="Full Name"
+                onBlur={handleBlur('fullName')}
+                onChangeText={handleChange('fullName')}
+                value={values.fullName}
+              />
+              {errors.fullName && touched.fullName && (
+                <Text style={style.textErrorMessage}>{errors.fullName}</Text>
+              )}
+              <TextInput
+                style={style.textInput}
+                placeholder="Email"
+                keyboardType="email-address"
+                onBlur={handleBlur('email')}
+                onChangeText={handleChange('email')}
+                value={values.email}
+              />
+              {errors.email && touched.email && (
+                <Text style={style.textErrorMessage}>{errors.email}</Text>
+              )}
+              <View style={style.textInputPass}>
+                {!secureTextEntry && (
+                  <TextInput
+                    style={style.inputNew}
+                    placeholder="Password"
+                    secureTextEntry={!visible}
+                    onBlur={handleBlur('password')}
+                    onChangeText={handleChange('password')}
+                    value={values.password}
+                  />
+                )}
+                {!secureTextEntry && (
+                  <TouchableOpacity onPress={() => setVisibility(!visible)}>
+                    {!visible && <Icon size={20} name="eye-off" />}
+                    {visible && <Icon size={25} name="eye" />}
+                  </TouchableOpacity>
+                )}
+              </View>
+              {errors.password && touched.password && (
+                <Text style={style.textErrorMessage}>{errors.password}</Text>
+              )}
+              <View style={style.textInputPass}>
+                {!secureTextEntry && (
+                  <TextInput
+                    style={style.inputNew}
+                    placeholder="Confirm Password"
+                    secureTextEntry={!visible}
+                    onBlur={handleBlur('confirmPassword')}
+                    onChangeText={handleChange('confirmPassword')}
+                    value={values.confirmPassword}
+                  />
+                )}
+                {!secureTextEntry && (
+                  <TouchableOpacity onPress={() => setVisibility(!visible)}>
+                    {!visible && <Icon size={20} name="eye-off" />}
+                    {visible && <Icon size={25} name="eye" />}
+                  </TouchableOpacity>
+                )}
+              </View>
+              {errors.password && touched.password && (
+                <Text style={style.textErrorMessage}>{errors.password}</Text>
+              )}
+            </View>
+            <View>
+              <Text style={style.text2}>Accept terms and condition</Text>
+            </View>
+            <TouchableOpacity style={style.button} onPress={handleSubmit}>
+              <Text style={style.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-          )}
-        </View>
-        <View style={style.textInputPass}>
-          {!secureTextEntry && (
-            <TextInput
-              style={style.inputNew}
-              placeholder="Confirm Password"
-              secureTextEntry={!visible}
-            />
-          )}
-          {!secureTextEntry && (
-            <TouchableOpacity onPress={() => setVisibility(!visible)}>
-              {!visible && <Icon size={20} name="eye-off" />}
-              {visible && <Icon size={25} name="eye" />}
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-      <View>
-        <Text style={style.text2}>Accept terms and condition</Text>
-      </View>
-      <TouchableOpacity
-        style={style.button}
-        onPress={() => navigation.navigate('Login')}>
-        <Text style={style.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+          </>
+        )}
+      </Formik>
     </View>
   );
 };
@@ -134,6 +200,9 @@ const style = StyleSheet.create({
   inputNew: {
     flex: 1,
     fontSize: 17,
+  },
+  textErrorMessage: {
+    color: 'red',
   },
 });
 

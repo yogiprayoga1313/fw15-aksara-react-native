@@ -8,9 +8,18 @@ import {
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {logout as logoutAction} from '../redux/reducers/auth';
+import {useDispatch} from 'react-redux';
 
 const Home = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const doLogout = () => {
+    dispatch(logoutAction());
+    // navigation.navigate('Login');
+  };
+
   return (
     <ScrollView style={style.wrapper}>
       <View>
@@ -113,7 +122,7 @@ const Home = () => {
                 {/* <Text>Next</Text> */}
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={style.buttonUpcoming}>
+            <TouchableOpacity style={style.buttonUpcoming} onPress={doLogout}>
               <Text style={style.textButton}>Show All 5 Events</Text>
             </TouchableOpacity>
           </View>
@@ -313,6 +322,12 @@ const style = StyleSheet.create({
   contentUpcoming: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+  },
+  button: {
+    padding: 10,
   },
 });
 
