@@ -17,6 +17,7 @@ import MyBooking from './myBooking';
 import MyWishlist from './myWishlist';
 import ManageEvent from './manageEvent';
 import {useSelector} from 'react-redux';
+import ResetPassword from './auth/resetPassword';
 
 const Stack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
@@ -49,6 +50,11 @@ const Main = () => {
             options={{headerTitle: ''}}
             name="ForgotPassword"
             component={ForgotPassword}
+          />
+          <AuthStack.Screen
+            options={{headerTitle: ''}}
+            name="ResetPassword"
+            component={ResetPassword}
           />
         </AuthStack.Navigator>
       )}

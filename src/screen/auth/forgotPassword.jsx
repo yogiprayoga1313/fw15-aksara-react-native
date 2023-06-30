@@ -7,9 +7,25 @@ import {
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {Formik} from 'formik';
+import {useDispatch} from 'react-redux';
+import {asyncForgotPassword} from '../../redux/actions/auth';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('email cannot be empty'),
+});
 
 const ForgotPassword = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const doForgot = values => {
+    dispatch(asyncForgotPassword(values));
+    navigation.navigate('ResetPassword');
+  };
   return (
     <View style={style.containerFp}>
       <View style={style.container}>
@@ -17,14 +33,40 @@ const ForgotPassword = () => {
           <Text style={style.text1}>Forgot Password</Text>
           <Text style={style.text2}>You’ll get mail soon on your email</Text>
         </View>
-        <View>
-          <TextInput style={style.textInput} placeholder="Email" />
-        </View>
-        <TouchableOpacity
-          style={style.button}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={style.buttonText}>Send</Text>
-        </TouchableOpacity>
+        <Formik
+          initialValues={{
+            email: '',
+          }}
+          onSubmit={doForgot}
+          validationSchema={validationSchema}>
+          {({
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            values,
+            touched,
+            errors,
+          }) => (
+            <>
+              <View>
+                <TextInput
+                  style={style.textInput}
+                  keyboardType="email-address"
+                  placeholder="Email"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                />
+                {errors.email && touched.email && (
+                  <Text style={style.textErrorMessage}>{errors.email}</Text>
+                )}
+              </View>
+              <TouchableOpacity style={style.button} onPress={handleSubmit}>
+                <Text style={style.buttonText}>Send</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </Formik>
       </View>
     </View>
   );
@@ -79,6 +121,9 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
+  },
+  textErrorMessage: {
+    color: 'red',
   },
 });
 
