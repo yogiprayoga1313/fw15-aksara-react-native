@@ -13,6 +13,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Formik} from 'formik';
 import {asyncLogin} from '../../redux/actions/auth';
 import * as Yup from 'yup';
+import Alert from '../../components/alert';
+import {clearMessage} from '../../redux/reducers/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address'),
@@ -28,13 +30,27 @@ const Login = ({secureTextEntry}) => {
     dispatch(asyncLogin(values));
   };
 
+  // if (errorMessage) {
+  //   setTimeout(() => {
+  //     dispatch(clearMessage());
+  //   }, 5000);
+  // }
+
   return (
     <View style={style.container}>
       <View style={style.boxContainer}>
         <Text style={style.text1}>Login</Text>
-        <Text style={style.text2}>Hi, Welcome back to Urticket! </Text>
+        <View>
+          <Text style={style.text2}>Hi, Welcome back to Urticket! </Text>
+          <View style={style.contText5}>
+            <Text style={style.text2}>Don't have an account?</Text>
+            <Link to="/Register">
+              <Text style={style.text4}>Sign Up</Text>
+            </Link>
+          </View>
+        </View>
       </View>
-      {/* {errorMessage && <Alert variant="error"> {errorMessage}</Alert>} */}
+      {errorMessage && <Alert variant="error"> {errorMessage}</Alert>}
       <Formik
         initialValues={{
           email: '',
@@ -88,9 +104,11 @@ const Login = ({secureTextEntry}) => {
               )}
             </View>
             <View>
-              <Link style={style.text3} to="/ForgotPassword">
-                <Text>Forgot Password?</Text>
-              </Link>
+              <View>
+                <Link style={style.text3} to="/ForgotPassword">
+                  Forgot Password?
+                </Link>
+              </View>
             </View>
             <TouchableOpacity style={style.button} onPress={handleSubmit}>
               <Text style={style.buttonText}>Log In</Text>
@@ -138,7 +156,7 @@ const style = StyleSheet.create({
     fontSize: 15,
   },
   textInput: {
-    opacity: 0.6,
+    // opacity: 0.6,
     fontSize: 17,
     padding: 15,
     borderWidth: 1,
@@ -150,7 +168,7 @@ const style = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3366FF',
+    backgroundColor: '#76BA99',
     width: '100%',
     height: 50,
     borderRadius: 20,
@@ -166,7 +184,7 @@ const style = StyleSheet.create({
     gap: 20,
   },
   textInputPassLogin: {
-    opacity: 0.6,
+    // opacity: 0.6,
     paddingHorizontal: 10,
     borderWidth: 1,
     borderRadius: 15,
@@ -192,7 +210,7 @@ const style = StyleSheet.create({
     height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: 'blue',
+    borderColor: '#76BA99',
   },
   iconFb: {
     borderRadius: 10,
@@ -201,7 +219,15 @@ const style = StyleSheet.create({
     height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: 'blue',
+    borderColor: '#76BA99',
+  },
+  text4: {
+    color: '#3366FF',
+    fontWeight: 'bold',
+  },
+  contText5: {
+    flexDirection: 'row',
+    gap: 7,
   },
 });
 

@@ -4,6 +4,7 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -11,8 +12,11 @@ import Icon from 'react-native-vector-icons/Feather';
 import {Link} from '@react-navigation/native';
 import {Formik} from 'formik';
 import {asyncRegister} from '../../redux/actions/auth';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import * as Yup from 'yup';
+import Alert from '../../components/alert';
+import {clearMessage} from '../../redux/reducers/auth';
+import Checkbox from '../../components/checkbox';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address'),
@@ -24,11 +28,19 @@ const Register = ({secureTextEntry}) => {
   const [visible, setVisibility] = React.useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const successMessage = useSelector(state => state.auth.successMessage);
+  const errorMessage = useSelector(state => state.auth.errorMessage);
 
   const doRegister = values => {
     dispatch(asyncRegister(values));
-    navigation.navigate('Login');
   };
+
+  if (successMessage) {
+    setTimeout(() => {
+      dispatch(clearMessage());
+      navigation.replace('Login');
+    }, 1500);
+  }
   return (
     <View style={style.container}>
       <View style={style.boxContainer}>
@@ -40,12 +52,15 @@ const Register = ({secureTextEntry}) => {
           </Link>
         </View>
       </View>
+      {successMessage && <Alert variant="success">Success Register</Alert>}
+      {errorMessage && <Alert variant="error">{errorMessage}</Alert>}
       <Formik
         initialValues={{
           fullName: '',
           email: '',
           password: '',
           confirmPassword: '',
+          termAndCondition: false,
         }}
         validationSchema={validationSchema}
         onSubmit={doRegister}>
@@ -53,6 +68,7 @@ const Register = ({secureTextEntry}) => {
           handleBlur,
           handleChange,
           handleSubmit,
+          setFieldValue,
           values,
           touched,
           errors,
@@ -123,7 +139,14 @@ const Register = ({secureTextEntry}) => {
                 <Text style={style.textErrorMessage}>{errors.password}</Text>
               )}
             </View>
-            <View>
+            <View style={style.chechbox}>
+              <Checkbox
+                disabled={false}
+                value={values.termAndCondition}
+                onValueChange={value =>
+                  setFieldValue('termAndCondition', value)
+                }
+              />
               <Text style={style.text2}>Accept terms and condition</Text>
             </View>
             <TouchableOpacity style={style.button} onPress={handleSubmit}>
@@ -166,14 +189,14 @@ const style = StyleSheet.create({
     opacity: 0.6,
   },
   textInput: {
-    opacity: 0.6,
+    // opacity: 0.6,
     fontSize: 17,
     padding: 15,
     borderWidth: 1,
     borderRadius: 15,
   },
   textInputPass: {
-    opacity: 0.6,
+    // opacity: 0.6,
     paddingHorizontal: 10,
     borderWidth: 1,
     borderRadius: 15,
@@ -187,7 +210,7 @@ const style = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3366FF',
+    backgroundColor: '#76BA99',
     width: '100%',
     height: 50,
     borderRadius: 20,
@@ -203,6 +226,11 @@ const style = StyleSheet.create({
   },
   textErrorMessage: {
     color: 'red',
+  },
+  chechbox: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
   },
 });
 
