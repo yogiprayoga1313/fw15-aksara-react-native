@@ -7,8 +7,16 @@ import {
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import IconCard from 'react-native-vector-icons/FontAwesome';
+import House from 'react-native-vector-icons/MaterialIcons';
+import {Button, RadioButton} from 'react-native-paper';
 
 const Payment = () => {
+  const [gender, setGender] = React.useState('0');
+
+  const handleRadioPress = value => {
+    setGender(value);
+  };
   const navigation = useNavigation();
   return (
     <View style={style.container}>
@@ -23,9 +31,14 @@ const Payment = () => {
                 <Text style={style.textPayment}>Payment method</Text>
               </View>
               <View style={style.contCard}>
+                <RadioButton.Android name="gender" value="0" />
                 <View />
                 <View style={style.iconCard}>
-                  <Text>icon</Text>
+                  <IconCard
+                    name="credit-card-alt"
+                    size={20}
+                    color="rgba(136, 77, 255, 1)"
+                  />
                 </View>
                 <View>
                   <Text style={style.textIcon}>Card</Text>
@@ -47,27 +60,38 @@ const Payment = () => {
             </ScrollView>
             <View style={style.cardPayment}>
               <View style={style.contCard}>
+                <RadioButton.Android name="gender" value="0" />
                 <View />
                 <View style={style.iconCard2}>
-                  <Text>icon</Text>
+                  <IconCard
+                    name="bank"
+                    size={20}
+                    color="rgba(252, 16, 85, 1)"
+                  />
                 </View>
                 <View>
                   <Text style={style.textIcon}>Bank Transfer</Text>
                 </View>
               </View>
               <View style={style.contCard}>
+                <RadioButton.Android name="gender" value="0" />
                 <View />
                 <View style={style.iconCard3}>
-                  <Text>icon</Text>
+                  <House name="house" size={20} color="rgba(255, 137, 0, 1)" />
                 </View>
                 <View>
                   <Text style={style.textIcon}>Retail</Text>
                 </View>
               </View>
               <View style={style.contCard}>
+                <RadioButton.Android name="gender" value="0" />
                 <View />
                 <View style={style.iconCard4}>
-                  <Text>icon</Text>
+                  <IconCard
+                    name="dollar"
+                    size={20}
+                    color="rgba(51, 102, 255, 1)"
+                  />
                 </View>
                 <View>
                   <Text style={style.textIcon}>E-Money</Text>
@@ -176,7 +200,7 @@ const style = StyleSheet.create({
     color: 'black',
   },
   container: {
-    backgroundColor: '#3366FF',
+    backgroundColor: '#76BA99',
   },
   containerOne: {
     backgroundColor: 'white',
@@ -303,7 +327,7 @@ const style = StyleSheet.create({
     shadowOffset: {width: 0, height: -3},
     shadowOpacity: 1,
     shadowRadius: 1,
-    elevation: 7,
+    elevation: 5,
   },
   results: {
     flexDirection: 'row',
@@ -317,7 +341,7 @@ const style = StyleSheet.create({
     color: 'black',
   },
   touchCheckOut: {
-    backgroundColor: 'blue',
+    backgroundColor: '#76BA99',
     width: 169,
     height: 40,
     borderRadius: 15,

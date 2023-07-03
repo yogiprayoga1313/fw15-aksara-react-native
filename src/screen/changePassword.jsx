@@ -54,7 +54,7 @@ const ChangePassword = () => {
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(51, 102, 255, 1)',
+    backgroundColor: '#76BA99',
   },
   contText: {
     justifyContent: 'center',
@@ -90,7 +90,7 @@ const style = StyleSheet.create({
     borderRadius: 15,
   },
   touchCheckOut: {
-    backgroundColor: 'blue',
+    backgroundColor: '#76BA99',
     width: '100%',
     height: 61,
     borderRadius: 15,

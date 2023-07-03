@@ -41,7 +41,7 @@ const style = StyleSheet.create({
     marginTop: 80,
   },
   container: {
-    backgroundColor: 'rgba(51, 102, 255, 1)',
+    backgroundColor: '#76BA99',
   },
   contText: {
     justifyContent: 'center',

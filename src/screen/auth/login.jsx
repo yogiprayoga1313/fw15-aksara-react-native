@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {Link} from '@react-navigation/native';
+import {Link, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconPass from 'react-native-vector-icons/Feather';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,17 +24,25 @@ const validationSchema = Yup.object({
 const Login = ({secureTextEntry}) => {
   const [visible, setVisibility] = React.useState(false);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const successMessage = useSelector(state => state.auth.successMessage);
   const errorMessage = useSelector(state => state.auth.errorMessage);
 
   const doLogin = values => {
     dispatch(asyncLogin(values));
   };
 
-  // if (errorMessage) {
-  //   setTimeout(() => {
-  //     dispatch(clearMessage());
-  //   }, 5000);
-  // }
+  if (errorMessage) {
+    setTimeout(() => {
+      dispatch(clearMessage());
+    }, 3000);
+  }
+  if (successMessage) {
+    setTimeout(() => {
+      dispatch(clearMessage());
+      navigation.replace('Home');
+    }, 3000);
+  }
 
   return (
     <View style={style.container}>
@@ -50,6 +58,7 @@ const Login = ({secureTextEntry}) => {
           </View>
         </View>
       </View>
+      {successMessage && <Alert variant="success">Success Register</Alert>}
       {errorMessage && <Alert variant="error"> {errorMessage}</Alert>}
       <Formik
         initialValues={{
@@ -93,8 +102,8 @@ const Login = ({secureTextEntry}) => {
                 )}
                 {!secureTextEntry && (
                   <TouchableOpacity onPress={() => setVisibility(!visible)}>
-                    {!visible && <IconPass size={20} name="eye-off" />}
-                    {visible && <IconPass size={25} name="eye" />}
+                    {!visible && <IconPass size={20} name="eye" />}
+                    {visible && <IconPass size={25} name="eye-off" />}
                   </TouchableOpacity>
                 )}
               </View>
