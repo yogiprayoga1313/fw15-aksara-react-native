@@ -10,8 +10,10 @@ import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
 import {Formik} from 'formik';
 import {asyncResetPassword} from '../../redux/actions/auth';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import * as Yup from 'yup';
+import Alert from '../../components/alert';
+import {clearMessage} from '../../redux/reducers/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address'),
@@ -23,11 +25,19 @@ const ResetPassword = ({secureTextEntry}) => {
   const [visible, setVisibility] = React.useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const successMessage = useSelector(state => state.auth.successMessage);
+  const errorMessage = useSelector(state => state.auth.errorMessage);
 
   const doReset = values => {
     dispatch(asyncResetPassword(values));
     navigation.navigate('Login');
   };
+
+  if (errorMessage) {
+    setTimeout(() => {
+      dispatch(clearMessage());
+    }, 3000);
+  }
 
   return (
     <View style={style.container}>
@@ -37,6 +47,7 @@ const ResetPassword = ({secureTextEntry}) => {
           <Text style={style.text2}>Input code to reset your password!</Text>
         </View>
       </View>
+      {errorMessage && <Alert variant="error">{errorMessage}</Alert>}
       <Formik
         initialValues={{
           code: '',
@@ -62,6 +73,7 @@ const ResetPassword = ({secureTextEntry}) => {
                 onBlur={handleBlur('code')}
                 onChangeText={handleChange('code')}
                 value={values.code}
+                keyboardType="number"
               />
               {errors.code && touched.code && (
                 <Text style={style.textErrorMessage}>{errors.code}</Text>

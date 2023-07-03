@@ -7,6 +7,7 @@ const http = token => {
   if (token) {
     headers.authorization = `Bearer ${token}`;
   }
+  console.log(headers);
   const instance = axios.create({
     baseURL: BACKEND_URL,
     headers,

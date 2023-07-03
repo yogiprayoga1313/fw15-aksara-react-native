@@ -4,12 +4,26 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import http from '../helpers/http';
+import {useSelector} from 'react-redux';
+import IconPass from 'react-native-vector-icons/Feather';
 
 const Profile = () => {
+  const [profile, setProfile] = React.useState({});
   const navigation = useNavigation();
+  const token = useSelector(state => state.auth.token);
+
+  React.useEffect(() => {
+    async function getDataProfile() {
+      const {data} = await http(token).get('/profile');
+      setProfile(data.results);
+    }
+    getDataProfile();
+  }, [token]);
   return (
     <ScrollView style={style.container}>
       <View style={style.profCont}>
@@ -19,12 +33,27 @@ const Profile = () => {
         <View style={style.contProfileName}>
           <View style={style.foto}>
             <View style={style.fotoIcon}>
-              <Text>Foto</Text>
+              {profile.picture && (
+                <Image
+                  style={style.fotoProfile}
+                  source={{uri: profile?.picture}}
+                  width={90}
+                  height={90}
+                />
+              )}
+              {!profile.picture && (
+                <IconPass name="user" size={70} color="blue" />
+              )}
             </View>
           </View>
           <View style={style.contProfileName}>
-            <Text style={style.name}>Yogi Prayoga</Text>
-            <Text style={style.profesi}>Developers</Text>
+            <Text style={style.name}>{profile?.fullName}</Text>
+            {profile.profession && (
+              <Text style={style.profesi}>{profile?.profession}</Text>
+            )}
+            {!profile.profession && (
+              <Text style={style.profesiNoset}>No Set</Text>
+            )}
           </View>
         </View>
         <View style={style.cardOne}>
@@ -49,29 +78,31 @@ const Profile = () => {
           <View style={style.editProf}>
             <View style={style.contTextEdit}>
               <View>
-                <Text>+</Text>
+                <IconPass name="edit-3" size={25} />
               </View>
               <TouchableOpacity
                 onPress={() => navigation.navigate('EditProfile')}>
                 <Text style={style.textEdit}>Edit Profile</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity>
-              <Text>+</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ChangePassword')}>
+              <IconPass name="chevron-right" size={25} color="black" />
             </TouchableOpacity>
           </View>
           <View style={style.editPass}>
             <View style={style.contTextEdit}>
               <View>
-                <Text>+</Text>
+                <IconPass name="unlock" size={25} />
               </View>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ChangePassword')}>
                 <Text style={style.textEdit}>Change Password</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity>
-              <Text>+</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ChangePassword')}>
+              <IconPass name="chevron-right" size={25} color="black" />
             </TouchableOpacity>
           </View>
         </View>
@@ -82,7 +113,7 @@ const Profile = () => {
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(51, 102, 255, 1)',
+    backgroundColor: '#76BA99',
   },
   profileText: {
     color: 'white',
@@ -111,7 +142,7 @@ const style = StyleSheet.create({
     width: 137,
     height: 137,
     borderWidth: 5,
-    borderColor: 'blue',
+    borderColor: '#76BA99',
     borderRadius: 70,
     justifyContent: 'center',
     alignItems: 'center',
@@ -138,6 +169,11 @@ const style = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     opacity: 0.7,
+  },
+  profesiNoset: {
+    fontSize: 16,
+    color: 'red',
+    opacity: 0.5,
   },
   cardOne: {
     gap: 15,
@@ -196,6 +232,11 @@ const style = StyleSheet.create({
     gap: 20,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  fotoProfile: {
+    width: 110,
+    height: 110,
+    borderRadius: 60,
   },
 });
 export default Profile;

@@ -34,12 +34,16 @@ const Register = ({secureTextEntry}) => {
   const doRegister = values => {
     dispatch(asyncRegister(values));
   };
-
+  if (errorMessage) {
+    setTimeout(() => {
+      dispatch(clearMessage());
+    }, 3000);
+  }
   if (successMessage) {
     setTimeout(() => {
       dispatch(clearMessage());
       navigation.replace('Login');
-    }, 1500);
+    }, 3000);
   }
   return (
     <View style={style.container}>
@@ -109,8 +113,8 @@ const Register = ({secureTextEntry}) => {
                 )}
                 {!secureTextEntry && (
                   <TouchableOpacity onPress={() => setVisibility(!visible)}>
-                    {!visible && <Icon size={20} name="eye-off" />}
-                    {visible && <Icon size={25} name="eye" />}
+                    {!visible && <Icon size={20} name="eye" />}
+                    {visible && <Icon size={25} name="eye-off" />}
                   </TouchableOpacity>
                 )}
               </View>
@@ -130,8 +134,8 @@ const Register = ({secureTextEntry}) => {
                 )}
                 {!secureTextEntry && (
                   <TouchableOpacity onPress={() => setVisibility(!visible)}>
-                    {!visible && <Icon size={20} name="eye-off" />}
-                    {visible && <Icon size={25} name="eye" />}
+                    {!visible && <Icon size={20} name="eye" />}
+                    {visible && <Icon size={25} name="eye-off" />}
                   </TouchableOpacity>
                 )}
               </View>

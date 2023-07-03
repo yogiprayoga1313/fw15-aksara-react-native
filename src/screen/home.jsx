@@ -5,20 +5,35 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
+  Image,
 } from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {logout as logoutAction} from '../redux/reducers/auth';
 import {useDispatch} from 'react-redux';
+import http from '../helpers/http';
+import moment from 'moment';
+import IconPass from 'react-native-vector-icons/Feather';
+// import LinearGradient from 'react-native-linear-gradient';
 
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [events, setEvents] = React.useState([]);
 
   const doLogout = () => {
     dispatch(logoutAction());
     // navigation.navigate('Login');
   };
+
+  React.useEffect(() => {
+    async function getDataEvents() {
+      const {data} = await http().get('/events?limit=4');
+      setEvents(data.results);
+      console.log(data);
+    }
+    getDataEvents();
+  }, []);
 
   return (
     <ScrollView style={style.wrapper}>
@@ -34,32 +49,29 @@ const Home = () => {
           <Text style={style.containerText}>Events For You</Text>
         </View>
         <ScrollView horizontal={true} style={style.wrapperBox}>
-          <View style={style.containerTextNew}>
-            <View style={style.warapperTextCont}>
-              <Text style={style.textNew}>Wed, 15 Nov, 4:00 PM</Text>
-              <Text style={style.textContaninerNew}>
-                Sights & Sounds Exhibition
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={style.button1}
-              onPress={() => navigation.navigate('Events')}>
-              {/* <Text>Next</Text> */}
-            </TouchableOpacity>
-          </View>
-          <View style={style.containerTextNew}>
-            <View style={style.warapperTextCont}>
-              <Text style={style.textNew}>Wed, 15 Nov, 4:00 PM</Text>
-              <Text style={style.textContaninerNew}>
-                Sights & Sounds Exhibition
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Profile')}
-              style={style.button1}>
-              {/* <Text>Next</Text> */}
-            </TouchableOpacity>
-          </View>
+          {events.map(event => {
+            return (
+              <>
+                <View style={style.containerTextNew} key={event.id}>
+                  <Image
+                    source={{uri: event?.picture}}
+                    style={style.styleImage}
+                  />
+                  <View style={style.warapperTextCont}>
+                    <Text style={style.textNew}>
+                      {moment(event.date).format('ddd, DD-MMMM-YYYY')}
+                    </Text>
+                    <Text style={style.textContaninerNew}>{event.title}</Text>
+                    <TouchableOpacity
+                      style={style.arrow}
+                      onPress={() => navigation.navigate('Events')}>
+                      <IconPass name="arrow-right" size={30} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            );
+          })}
         </ScrollView>
         <View>
           <Text style={style.containerText}>Discover</Text>
@@ -70,7 +82,7 @@ const Home = () => {
               style={style.wrapperBoxDiscover}
               onPress={() => navigation.navigate('MyBooking')}>
               <View style={style.iconDiscover}>
-                <Text>0</Text>
+                <IconPass name="map-pin" size={20} color="purple" />
               </View>
               <Text style={style.textDiscover}>YOUR AREA</Text>
             </TouchableOpacity>
@@ -79,20 +91,24 @@ const Home = () => {
             onPress={() => navigation.navigate('MyWishlist')}
             style={style.wrapperBoxNew}>
             <View style={style.wrapperBoxDiscover}>
-              <View style={style.iconDiscover}>
-                <Text>0</Text>
+              <View style={style.iconDiscoverMusic}>
+                <IconPass
+                  name="music"
+                  size={20}
+                  color="rgba(255, 61, 113, 1)"
+                />
               </View>
-              <Text style={style.textDiscover}>YOUR AREA</Text>
+              <Text style={style.textDiscoverMusic}>MUSIC</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('ManageEvent')}
             style={style.wrapperBoxNew}>
             <View style={style.wrapperBoxDiscover}>
-              <View style={style.iconDiscover}>
-                <Text>0</Text>
+              <View style={style.iconDiscoverSport}>
+                <IconPass name="truck" size={20} color="rgba(255, 137, 0, 1)" />
               </View>
-              <Text style={style.textDiscover}>YOUR AREA</Text>
+              <Text style={style.textDiscoverSport}>SPORT</Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
@@ -146,7 +162,9 @@ const Home = () => {
                 {/* <Text>Next</Text> */}
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={style.buttonUpcoming}>
+            <TouchableOpacity
+              style={style.buttonUpcoming}
+              onPress={() => navigation.navigate('Profile')}>
               <Text style={style.textButton}>Show All 5 Events</Text>
             </TouchableOpacity>
           </View>
@@ -158,7 +176,7 @@ const Home = () => {
 
 const style = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#3366FF',
+    backgroundColor: '#76BA99',
     gap: 30,
   },
   contsiner: {
@@ -190,28 +208,36 @@ const style = StyleSheet.create({
     padding: 30,
   },
   containerTextNew: {
-    width: 260,
-    height: 376,
-    backgroundColor: 'black',
-    borderRadius: 40,
     marginLeft: 20,
     marginRight: 20,
-    padding: 20,
     gap: 10,
   },
   textContaninerNew: {
     color: 'white',
     fontSize: 22,
     fontWeight: 'bold',
+    position: 'absolute',
+    top: 30,
+    left: 10,
   },
   textNew: {
     fontSize: 16,
     fontWeight: 'semibold',
     color: 'white',
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   warapperTextCont: {
+    position: 'absolute',
     backgroundColor: 'black',
-    marginTop: 200,
+    top: 250,
+    // left: 15,
+    width: 260,
+    height: 125,
+    flexDirection: 'column',
+    borderBottomLeftRadius: 20,
+    borderBottomEndRadius: 20,
   },
   wrapperBox: {
     flexDirection: 'row',
@@ -239,15 +265,47 @@ const style = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 310,
+    left: 15,
   },
   textDiscover: {
     fontSize: 16,
     color: '#884DFF',
+    fontWeight: 'bold',
+  },
+  textDiscoverMusic: {
+    fontSize: 16,
+    color: 'rgba(255, 61, 113, 1)',
+    fontWeight: 'bold',
+  },
+  textDiscoverSport: {
+    fontSize: 16,
+    color: 'rgba(255, 137, 0, 1)',
+    fontWeight: 'bold',
   },
   iconDiscover: {
     width: 45,
     height: 45,
     backgroundColor: '#D0B8FF',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconDiscoverSport: {
+    width: 45,
+    height: 45,
+    backgroundColor: 'rgba(255, 218, 175, 1)',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconDiscoverMusic: {
+    width: 45,
+    height: 45,
+    backgroundColor: 'rgba(255, 183, 202, 1)',
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -328,6 +386,28 @@ const style = StyleSheet.create({
   },
   button: {
     padding: 10,
+  },
+  styleImage: {
+    width: 260,
+    height: 376,
+    borderRadius: 30,
+  },
+  arrow: {
+    backgroundColor: '#76BA99',
+    width: 45,
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    top: 70,
+    left: 10,
+  },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
   },
 });
 

@@ -108,7 +108,7 @@ const Booking = () => {
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: '#3366FF',
+    backgroundColor: '#76BA99',
   },
   containerOne: {
     backgroundColor: 'white',
@@ -249,7 +249,7 @@ const style = StyleSheet.create({
     color: 'black',
   },
   touchCheckOut: {
-    backgroundColor: 'blue',
+    backgroundColor: '#76BA99',
     width: 169,
     height: 40,
     borderRadius: 15,

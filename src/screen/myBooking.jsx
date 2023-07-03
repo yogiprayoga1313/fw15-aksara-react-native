@@ -88,7 +88,7 @@ const MyBooking = () => {
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(51, 102, 255, 1)',
+    backgroundColor: '#76BA99',
   },
   contText: {
     justifyContent: 'center',
