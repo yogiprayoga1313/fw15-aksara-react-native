@@ -7,10 +7,10 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {logout as logoutAction} from '../redux/reducers/auth';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import http from '../helpers/http';
 import moment from 'moment';
 import IconPass from 'react-native-vector-icons/Feather';
@@ -20,17 +20,25 @@ const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [events, setEvents] = React.useState([]);
+  const deviceToken = useSelector(state => state.deviceToken.data);
+  const token = useSelector(state => state.auth.token);
+  const saveToken = useCallback(async () => {
+    const form = new URLSearchParams({token: deviceToken.token});
+    const {data} = await http(token).post('/device-token', form.toString());
+  }, [deviceToken, token]);
+
+  React.useEffect(() => {
+    saveToken();
+  }, [saveToken]);
 
   const doLogout = () => {
     dispatch(logoutAction());
-    // navigation.navigate('Login');
   };
 
   React.useEffect(() => {
     async function getDataEvents() {
       const {data} = await http().get('/events?limit=4');
       setEvents(data.results);
-      console.log(data);
     }
     getDataEvents();
   }, []);
