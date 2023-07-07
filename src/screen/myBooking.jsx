@@ -5,12 +5,18 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import IconPass from 'react-native-vector-icons/Feather';
 import React from 'react';
 
 const MyBooking = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView style={style.container}>
       <View style={style.contText}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.textEditMb}>My Booking</Text>
       </View>
       <View style={style.contValue}>
@@ -91,14 +97,15 @@ const style = StyleSheet.create({
     backgroundColor: '#76BA99',
   },
   contText: {
-    justifyContent: 'center',
     alignItems: 'center',
     padding: 30,
+    flexDirection: 'row',
   },
   textEditMb: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    marginLeft: 80,
   },
   contValue: {
     backgroundColor: 'white',

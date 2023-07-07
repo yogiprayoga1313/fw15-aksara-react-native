@@ -6,16 +6,22 @@ import {
   ScrollView,
 } from 'react-native';
 import React from 'react';
+import IconPass from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 
-const Booking = () => {
+const Booking = ({event, route}) => {
+  const {id} = route.params;
   const navigation = useNavigation();
   return (
     <View style={style.container}>
       <View style={style.contCheck}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Events', {id: event.id})}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.chechText}>Checkout</Text>
       </View>
-      <View>
+      <ScrollView style={style.scrolView}>
         <View style={style.containerOne}>
           <View style={style.contPrice}>
             <View style={style.sectCont}>
@@ -31,6 +37,31 @@ const Booking = () => {
               </View>
               <View style={style.contItem}>
                 <View style={style.contIcon} />
+                <View style={style.contSect}>
+                  <View>
+                    <Text style={style.textSect}>SECTION REG, ROW 1</Text>
+                    <Text style={style.contSeat}>12 Seats available</Text>
+                  </View>
+                  <Text style={style.contQuty}>Quantity</Text>
+                </View>
+                <View style={style.contPriceOut}>
+                  <View style={style.priceOut}>
+                    <Text style={style.textSect}>$15</Text>
+                    <Text>per person</Text>
+                  </View>
+                  <View style={style.count}>
+                    <TouchableOpacity style={style.countMin}>
+                      <Text>-</Text>
+                    </TouchableOpacity>
+                    <Text style={style.textCount}>0</Text>
+                    <TouchableOpacity style={style.countMin}>
+                      <Text>-</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+              <View style={style.contItem}>
+                <View style={style.contIcon2} />
                 <View style={style.contSect}>
                   <View>
                     <Text style={style.textSect}>SECTION REG, ROW 1</Text>
@@ -101,7 +132,7 @@ const Booking = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -109,6 +140,9 @@ const Booking = () => {
 const style = StyleSheet.create({
   container: {
     backgroundColor: '#76BA99',
+  },
+  scrolView: {
+    marginBottom: 50,
   },
   containerOne: {
     backgroundColor: 'white',
@@ -126,10 +160,11 @@ const style = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    marginLeft: 90,
   },
   contCheck: {
-    justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
     padding: 30,
   },
   sectCont: {

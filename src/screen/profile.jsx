@@ -27,6 +27,9 @@ const Profile = () => {
   return (
     <ScrollView style={style.container}>
       <View style={style.profCont}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.profileText}>Profile</Text>
       </View>
       <View style={style.contProfile}>
@@ -86,7 +89,7 @@ const Profile = () => {
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ChangePassword')}>
+              onPress={() => navigation.navigate('EditProfile')}>
               <IconPass name="chevron-right" size={25} color="black" />
             </TouchableOpacity>
           </View>
@@ -119,11 +122,12 @@ const style = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
+    marginLeft: 90,
   },
   profCont: {
-    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 25,
+    padding: 30,
+    flexDirection: 'row',
   },
   contProfile: {
     backgroundColor: 'white',
