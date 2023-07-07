@@ -15,9 +15,11 @@ import http from '../helpers/http';
 import moment from 'moment';
 import {Picker} from '@react-native-picker/picker';
 import IconPass from 'react-native-vector-icons/Feather';
+import {useNavigation} from '@react-navigation/native';
 // import {Image} from 'react-native-paper/lib/typescript/src/components/Avatar/Avatar';
 
 const EditProfile = () => {
+  const navigation = useNavigation();
   const [gender, setGender] = React.useState('0');
   const [profile, setProfile] = React.useState({});
   const [editUserName, setEditUserName] = React.useState(false);
@@ -73,6 +75,9 @@ const EditProfile = () => {
   return (
     <ScrollView style={style.container}>
       <View style={style.contTextPr}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.textEditPr}>Edit profile</Text>
       </View>
       <Formik
@@ -256,11 +261,12 @@ const style = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    marginLeft: 90,
   },
   contTextPr: {
-    justifyContent: 'center',
     alignItems: 'center',
     padding: 30,
+    flexDirection: 'row',
   },
   contEditProf: {
     backgroundColor: 'white',

@@ -14,9 +14,9 @@ import {Formik} from 'formik';
 import {asyncRegister} from '../../redux/actions/auth';
 import {useDispatch, useSelector} from 'react-redux';
 import * as Yup from 'yup';
-import Alert from '../../components/alert';
+import Alert from '../../components/Alert';
 import {clearMessage} from '../../redux/reducers/auth';
-import Checkbox from '../../components/checkbox';
+import Checkbox from '../../components/Checkbox';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address'),

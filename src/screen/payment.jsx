@@ -9,6 +9,7 @@ import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import IconCard from 'react-native-vector-icons/FontAwesome';
 import House from 'react-native-vector-icons/MaterialIcons';
+import IconPass from 'react-native-vector-icons/Feather';
 import {Button, RadioButton} from 'react-native-paper';
 
 const Payment = () => {
@@ -21,99 +22,96 @@ const Payment = () => {
   return (
     <View style={style.container}>
       <View style={style.contCheck}>
+        <TouchableOpacity onPress={() => navigation.navigate('Booking')}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.chechText}>Payment</Text>
       </View>
-      <View>
-        <View style={style.containerOne}>
-          <View style={style.contPrice}>
-            <View style={style.contOut}>
-              <View>
-                <Text style={style.textPayment}>Payment method</Text>
-              </View>
-              <View style={style.contCard}>
-                <RadioButton.Android name="gender" value="0" />
-                <View />
-                <View style={style.iconCard}>
-                  <IconCard
-                    name="credit-card-alt"
-                    size={20}
-                    color="rgba(136, 77, 255, 1)"
-                  />
-                </View>
-                <View>
-                  <Text style={style.textIcon}>Card</Text>
-                </View>
-              </View>
-            </View>
-            <ScrollView horizontal={true}>
-              <View style={style.CardCountain}>
-                <View style={style.cardOutput}>
-                  <Text>Card</Text>
-                </View>
-                <View style={style.cardOutput}>
-                  <Text>Card</Text>
-                </View>
-                <TouchableOpacity style={style.plusCont}>
-                  <Text>+</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-            <View style={style.cardPayment}>
-              <View style={style.contCard}>
-                <RadioButton.Android name="gender" value="0" />
-                <View />
-                <View style={style.iconCard2}>
-                  <IconCard
-                    name="bank"
-                    size={20}
-                    color="rgba(252, 16, 85, 1)"
-                  />
-                </View>
-                <View>
-                  <Text style={style.textIcon}>Bank Transfer</Text>
-                </View>
-              </View>
-              <View style={style.contCard}>
-                <RadioButton.Android name="gender" value="0" />
-                <View />
-                <View style={style.iconCard3}>
-                  <House name="house" size={20} color="rgba(255, 137, 0, 1)" />
-                </View>
-                <View>
-                  <Text style={style.textIcon}>Retail</Text>
-                </View>
-              </View>
-              <View style={style.contCard}>
-                <RadioButton.Android name="gender" value="0" />
-                <View />
-                <View style={style.iconCard4}>
-                  <IconCard
-                    name="dollar"
-                    size={20}
-                    color="rgba(51, 102, 255, 1)"
-                  />
-                </View>
-                <View>
-                  <Text style={style.textIcon}>E-Money</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View style={style.checkOut}>
+      <View style={style.containerOne}>
+        <View style={style.contPrice}>
+          <View style={style.contOut}>
             <View>
-              <View style={style.results}>
-                <Text style={style.reslutsText}>Total Payment</Text>
+              <Text style={style.textPayment}>Payment method</Text>
+            </View>
+            <View style={style.contCard}>
+              <RadioButton.Android name="gender" value="0" />
+              <View />
+              <View style={style.iconCard}>
+                <IconCard
+                  name="credit-card-alt"
+                  size={20}
+                  color="rgba(136, 77, 255, 1)"
+                />
               </View>
-              <View style={style.getOwnCont}>
-                <Text style={style.getOwn}>$70</Text>
+              <View>
+                <Text style={style.textIcon}>Card</Text>
               </View>
             </View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Payment')}
-              style={style.touchCheckOut}>
-              <Text style={style.textCheckout}>Payment</Text>
-            </TouchableOpacity>
           </View>
+          <ScrollView horizontal={true}>
+            <View style={style.CardCountain}>
+              <View style={style.cardOutput}>
+                <Text>Card</Text>
+              </View>
+              <View style={style.cardOutput}>
+                <Text>Card</Text>
+              </View>
+              <TouchableOpacity style={style.plusCont}>
+                <Text>+</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+          <View style={style.cardPayment}>
+            <View style={style.contCard}>
+              <RadioButton.Android name="gender" value="0" />
+              <View />
+              <View style={style.iconCard2}>
+                <IconCard name="bank" size={20} color="rgba(252, 16, 85, 1)" />
+              </View>
+              <View>
+                <Text style={style.textIcon}>Bank Transfer</Text>
+              </View>
+            </View>
+            <View style={style.contCard}>
+              <RadioButton.Android name="gender" value="0" />
+              <View />
+              <View style={style.iconCard3}>
+                <House name="house" size={20} color="rgba(255, 137, 0, 1)" />
+              </View>
+              <View>
+                <Text style={style.textIcon}>Retail</Text>
+              </View>
+            </View>
+            <View style={style.contCard}>
+              <RadioButton.Android name="gender" value="0" />
+              <View />
+              <View style={style.iconCard4}>
+                <IconCard
+                  name="dollar"
+                  size={20}
+                  color="rgba(51, 102, 255, 1)"
+                />
+              </View>
+              <View>
+                <Text style={style.textIcon}>E-Money</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View style={style.checkOut}>
+          <View>
+            <View style={style.results}>
+              <Text style={style.reslutsText}>Total Payment</Text>
+            </View>
+            <View style={style.getOwnCont}>
+              <Text style={style.getOwn}>$70</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Payment')}
+            style={style.touchCheckOut}>
+            <Text style={style.textCheckout}>Payment</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -125,6 +123,11 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  contCheck: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 30,
   },
   plusCont: {
     justifyContent: 'center',
@@ -211,7 +214,7 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingTop: 10,
+    paddingTop: 40,
     paddingHorizontal: 30,
     gap: 20,
   },
@@ -219,11 +222,7 @@ const style = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
-  },
-  contCheck: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
+    marginLeft: 90,
   },
   sectCont: {
     width: '100%',

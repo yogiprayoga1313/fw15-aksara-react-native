@@ -8,13 +8,23 @@ import {
   Image,
 } from 'react-native';
 import React, {useCallback} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {logout as logoutAction} from '../redux/reducers/auth';
+import {useNavigation, DrawerActions} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import http from '../helpers/http';
 import moment from 'moment';
 import IconPass from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/FontAwesome';
 // import LinearGradient from 'react-native-linear-gradient';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Events from './Events';
+import Payment from './Payment';
+import Profile from './Profile';
+import EditProfile from './EditProfile';
+import ChangePassword from './ChangePassword';
+import ManageEvent from './ManageEvent';
+import Booking from './Booking';
+
+const Stack = createNativeStackNavigator();
 
 const Home = () => {
   const navigation = useNavigation();
@@ -22,6 +32,11 @@ const Home = () => {
   const [events, setEvents] = React.useState([]);
   const deviceToken = useSelector(state => state.deviceToken.data);
   const token = useSelector(state => state.auth.token);
+
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
   const saveToken = useCallback(async () => {
     const form = new URLSearchParams({token: deviceToken.token});
     const {data} = await http(token).post('/device-token', form.toString());
@@ -31,13 +46,9 @@ const Home = () => {
     saveToken();
   }, [saveToken]);
 
-  const doLogout = () => {
-    dispatch(logoutAction());
-  };
-
   React.useEffect(() => {
     async function getDataEvents() {
-      const {data} = await http().get('/events?limit=4');
+      const {data} = await http().get('/events?limit=5&sortBy=DESC');
       setEvents(data.results);
     }
     getDataEvents();
@@ -45,6 +56,11 @@ const Home = () => {
 
   return (
     <ScrollView style={style.wrapper}>
+      <View style={style.bars}>
+        <TouchableOpacity onPress={openDrawer}>
+          <Icon name="bars" size={40} color="white" />
+        </TouchableOpacity>
+      </View>
       <View>
         <TextInput
           style={style.textInput}
@@ -62,7 +78,7 @@ const Home = () => {
               <>
                 <View style={style.containerTextNew} key={event.id}>
                   <Image
-                    source={{uri: event?.picture}}
+                    source={{uri: event?.picture || null}}
                     style={style.styleImage}
                   />
                   <View style={style.warapperTextCont}>
@@ -72,7 +88,9 @@ const Home = () => {
                     <Text style={style.textContaninerNew}>{event.title}</Text>
                     <TouchableOpacity
                       style={style.arrow}
-                      onPress={() => navigation.navigate('Events')}>
+                      onPress={() =>
+                        navigation.navigate('Events', {id: event.id})
+                      }>
                       <IconPass name="arrow-right" size={30} color="white" />
                     </TouchableOpacity>
                   </View>
@@ -86,18 +104,14 @@ const Home = () => {
         </View>
         <ScrollView style={style.wrapperBox} horizontal={true}>
           <View style={style.wrapperBoxNew}>
-            <TouchableOpacity
-              style={style.wrapperBoxDiscover}
-              onPress={() => navigation.navigate('MyBooking')}>
+            <TouchableOpacity style={style.wrapperBoxDiscover}>
               <View style={style.iconDiscover}>
                 <IconPass name="map-pin" size={20} color="purple" />
               </View>
               <Text style={style.textDiscover}>YOUR AREA</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MyWishlist')}
-            style={style.wrapperBoxNew}>
+          <TouchableOpacity style={style.wrapperBoxNew}>
             <View style={style.wrapperBoxDiscover}>
               <View style={style.iconDiscoverMusic}>
                 <IconPass
@@ -109,9 +123,7 @@ const Home = () => {
               <Text style={style.textDiscoverMusic}>MUSIC</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ManageEvent')}
-            style={style.wrapperBoxNew}>
+          <TouchableOpacity style={style.wrapperBoxNew}>
             <View style={style.wrapperBoxDiscover}>
               <View style={style.iconDiscoverSport}>
                 <IconPass name="truck" size={20} color="rgba(255, 137, 0, 1)" />
@@ -146,7 +158,7 @@ const Home = () => {
                 {/* <Text>Next</Text> */}
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={style.buttonUpcoming} onPress={doLogout}>
+            <TouchableOpacity style={style.buttonUpcoming}>
               <Text style={style.textButton}>Show All 5 Events</Text>
             </TouchableOpacity>
           </View>
@@ -170,9 +182,7 @@ const Home = () => {
                 {/* <Text>Next</Text> */}
               </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={style.buttonUpcoming}
-              onPress={() => navigation.navigate('Profile')}>
+            <TouchableOpacity style={style.buttonUpcoming}>
               <Text style={style.textButton}>Show All 5 Events</Text>
             </TouchableOpacity>
           </View>
@@ -182,10 +192,29 @@ const Home = () => {
   );
 };
 
+const HomeStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="HomeMain" component={Home} />
+      <Stack.Screen name="Events" component={Events} />
+      <Stack.Screen name="Payment" component={Payment} />
+      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="Booking" component={Booking} />
+      <Stack.Screen name="ManageEvent" component={ManageEvent} />
+    </Stack.Navigator>
+  );
+};
+
 const style = StyleSheet.create({
   wrapper: {
     backgroundColor: '#76BA99',
     gap: 30,
+  },
+  bars: {
+    flexDirection: 'row',
+    padding: 30,
   },
   contsiner: {
     backgroundColor: 'white',
@@ -419,4 +448,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default Home;
+export default HomeStack;

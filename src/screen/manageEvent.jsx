@@ -6,11 +6,17 @@ import {
   StyleSheet,
 } from 'react-native';
 import React from 'react';
+import IconPass from 'react-native-vector-icons/Feather';
+import {useNavigation} from '@react-navigation/native';
 
 const ManageEvent = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView style={style.container}>
       <View style={style.contText}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.textEditMb}>Manage Event</Text>
       </View>
       <View style={style.contValue}>
@@ -44,7 +50,7 @@ const style = StyleSheet.create({
     backgroundColor: '#76BA99',
   },
   contText: {
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
     padding: 30,
   },
@@ -52,6 +58,7 @@ const style = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    marginLeft: 80,
   },
   contValue: {
     backgroundColor: 'white',
@@ -59,7 +66,7 @@ const style = StyleSheet.create({
     borderTopRightRadius: 30,
     padding: 30,
     gap: 50,
-    height: 580,
+    height: 700,
   },
   month: {
     backgroundColor: 'rgba(234, 241, 255, 1)',

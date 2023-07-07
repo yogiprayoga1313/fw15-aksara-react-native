@@ -1,10 +1,23 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
+import IconPass from 'react-native-vector-icons/Feather';
+import {useNavigation} from '@react-navigation/native';
 
 const MyWishlist = () => {
+  const navigation = useNavigation();
+
   return (
     <ScrollView style={style.container}>
       <View style={style.contText}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
         <Text style={style.textEditMb}>My Wishlist</Text>
       </View>
       <View style={style.contValue}>
@@ -70,15 +83,12 @@ const style = StyleSheet.create({
   container: {
     backgroundColor: '#76BA99',
   },
-  contText: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
-  },
+  contText: {flexDirection: 'row', alignItems: 'center', padding: 30},
   textEditMb: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    marginLeft: 80,
   },
   contValue: {
     backgroundColor: 'white',
@@ -87,6 +97,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     padding: 30,
     gap: 50,
+    height: 700,
   },
   month: {
     backgroundColor: 'rgba(234, 241, 255, 1)',

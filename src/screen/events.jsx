@@ -1,58 +1,94 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ImageBackground,
+} from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import IconPass from 'react-native-vector-icons/Feather';
+import http from '../helpers/http';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
 
-const Events = () => {
-  const navigation = useNavigation();
+const Events = ({route, navigation}) => {
+  const {id} = route.params;
+  const [event, setEvent] = React.useState({});
+  const token = useSelector(state => state.auth.token);
+
+  React.useEffect(() => {
+    const getDataEvent = async () => {
+      const {data} = await http().get(`/events/${id}`);
+      setEvent(data.results);
+      console.log(data);
+    };
+    if (id) {
+      getDataEvent(id);
+    }
+  }, [id]);
   return (
-    <View style={style.container}>
-      <View style={style.containerImg}>
-        <Text style={style.textContTitle}>Sights & Sounds Exhibition</Text>
-        <View>
-          <View />
-          <Text style={style.textContLoc}>jakarta, Indonesia</Text>
+    <ScrollView style={style.container}>
+      <ImageBackground
+        source={{uri: event?.picture || null}}
+        style={style.containerImgPic}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('HomeMain')}
+          style={style.arrowBack}>
+          <IconPass name="arrow-left" size={35} color="white" />
+        </TouchableOpacity>
+        <View style={style.containerImg}>
+          <Text style={style.textContTitle}>{event?.title}</Text>
+          <View>
+            <View />
+            <Text style={style.textContLoc}>{event?.cityName}</Text>
+          </View>
+          <View>
+            <View />
+            <Text style={style.textContLoc}>
+              {moment(event?.date).format('ddd, DD MMM YYYY, HH:mm')}
+            </Text>
+          </View>
+          <View>
+            <Text style={style.textContLoc}>Attendees</Text>
+          </View>
         </View>
-        <View>
-          <View />
-          <Text style={style.textContLoc}>Wed, 15 Nov, 4:00 PM</Text>
-        </View>
-        <View>
-          <Text style={style.textContLoc}>Attendees</Text>
-        </View>
-      </View>
-      <View style={style.contDetail}>
-        <View style={style.contTextDetail}>
-          <Text style={style.textEvents}>Event Detail</Text>
-          <Text style={style.textDetailEvents}>
-            After his controversial art exhibition "Tear and Consume" back in
-            November 2018, in which guests were invited to tear up…
-          </Text>
-        </View>
-        <View style={style.contOut}>
-          <View style={style.contOutBtn}>
-            <View style={style.boxOut}>
-              <View style={style.boxTic}>
-                <Text style={style.textOut}>Ticket</Text>
-                <Text style={style.textItem}>VIP</Text>
+        <View style={style.contDetail}>
+          <View style={style.contTextDetail}>
+            <Text style={style.textEvents}>Event Detail</Text>
+            <Text style={style.textDetailEvents}>
+              {event?.descriptions && event.descriptions.length > 200
+                ? event.descriptions.substring(0, 200) + '...'
+                : event?.descriptions}
+            </Text>
+          </View>
+          <View style={style.contOut}>
+            <View style={style.contOutBtn}>
+              <View style={style.boxOut}>
+                <View style={style.boxTic}>
+                  <Text style={style.textOut}>Ticket</Text>
+                  <Text style={style.textItem}>VIP</Text>
+                </View>
+                <View style={style.boxQty}>
+                  <Text style={style.textOut}>Quantity</Text>
+                  <Text style={style.textItem}>2</Text>
+                </View>
+                <View style={style.boxPrc}>
+                  <Text style={style.textOut}>Price</Text>
+                  <Text style={style.textItem}>$70</Text>
+                </View>
               </View>
-              <View style={style.boxQty}>
-                <Text style={style.textOut}>Quantity</Text>
-                <Text style={style.textItem}>2</Text>
+              <View style={style.touchButton}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Booking')}>
+                  <Text style={style.textTouch}>Buy Tickets</Text>
+                </TouchableOpacity>
               </View>
-              <View style={style.boxPrc}>
-                <Text style={style.textOut}>Price</Text>
-                <Text style={style.textItem}>$70</Text>
-              </View>
-            </View>
-            <View style={style.touchButton}>
-              <TouchableOpacity onPress={() => navigation.navigate('Booking')}>
-                <Text style={style.textTouch}>Buy Tickets</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
-      </View>
-    </View>
+      </ImageBackground>
+    </ScrollView>
   );
 };
 
@@ -63,11 +99,16 @@ const style = StyleSheet.create({
   containerImg: {
     gap: 15,
     justifyContent: 'center',
-    // backgroundColor: 'blue',
-    width: '90%',
-    height: 243,
+    width: '100%',
+    height: 240,
     paddingHorizontal: 30,
-    marginTop: 30,
+  },
+  containerImgPic: {
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    width: '100%',
+    height: 730,
+    objectFit: 'bg-cover',
   },
   textContTitle: {
     fontSize: 26,
@@ -84,6 +125,7 @@ const style = StyleSheet.create({
     backgroundColor: '#192038',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    height: 300,
   },
   contTextDetail: {
     padding: 25,
@@ -104,7 +146,8 @@ const style = StyleSheet.create({
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     padding: 30,
-    marginBottom: 50,
+    marginBottom: 70,
+    height: 340,
   },
   boxOut: {
     flexDirection: 'row',
@@ -165,6 +208,10 @@ const style = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+  },
+  arrowBack: {
+    paddingHorizontal: 30,
+    marginTop: 20,
   },
 });
 

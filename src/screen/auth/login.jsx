@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Formik} from 'formik';
 import {asyncLogin} from '../../redux/actions/auth';
 import * as Yup from 'yup';
-import Alert from '../../components/alert';
+import Alert from '../../components/Alert';
 import {clearMessage} from '../../redux/reducers/auth';
 
 const validationSchema = Yup.object({
