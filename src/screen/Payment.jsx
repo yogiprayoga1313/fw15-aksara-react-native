@@ -6,23 +6,40 @@ import {
   ScrollView,
 } from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
 import IconCard from 'react-native-vector-icons/FontAwesome';
 import House from 'react-native-vector-icons/MaterialIcons';
 import IconPass from 'react-native-vector-icons/Feather';
-import {Button, RadioButton} from 'react-native-paper';
+import {useSelector} from 'react-redux';
+import http from '../helpers/http';
 
-const Payment = () => {
-  const [gender, setGender] = React.useState('0');
+const Payment = ({route, navigation}) => {
+  const {state} = route.params;
+  const token = useSelector(state => state.auth.token);
 
-  const handleRadioPress = value => {
-    setGender(value);
+  const [paymentMethod, setPaymentMethod] = React.useState('1');
+
+  const handlePaymentMethodChange = value => {
+    setPaymentMethod(value);
   };
-  const navigation = useNavigation();
+
+  const doPayment = async () => {
+    const {reservationId} = state;
+    const form = new URLSearchParams({
+      reservationId,
+      paymentMethodId: paymentMethod,
+    }).toString();
+    const {data} = await http(token).post('/payment', form);
+    if (data) {
+      navigation.navigate('My Booking', {
+        replace: true,
+      });
+    }
+  };
+
   return (
     <View style={style.container}>
       <View style={style.contCheck}>
-        <TouchableOpacity onPress={() => navigation.navigate('Booking')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <IconPass name="arrow-left" size={35} color="white" />
         </TouchableOpacity>
         <Text style={style.chechText}>Payment</Text>
@@ -34,8 +51,15 @@ const Payment = () => {
               <Text style={style.textPayment}>Payment method</Text>
             </View>
             <View style={style.contCard}>
-              <RadioButton.Android name="gender" value="0" />
-              <View />
+              <View style={style.borderRadio}>
+                <TouchableOpacity
+                  style={[
+                    style.radioButton,
+                    paymentMethod === '1' && style.radioButtonSelected,
+                  ]}
+                  onPress={() => handlePaymentMethodChange('1')}
+                />
+              </View>
               <View style={style.iconCard}>
                 <IconCard
                   name="credit-card-alt"
@@ -63,8 +87,15 @@ const Payment = () => {
           </ScrollView>
           <View style={style.cardPayment}>
             <View style={style.contCard}>
-              <RadioButton.Android name="gender" value="0" />
-              <View />
+              <View style={style.borderRadio}>
+                <TouchableOpacity
+                  style={[
+                    style.radioButton,
+                    paymentMethod === '2' && style.radioButtonSelected,
+                  ]}
+                  onPress={() => handlePaymentMethodChange('2')}
+                />
+              </View>
               <View style={style.iconCard2}>
                 <IconCard name="bank" size={20} color="rgba(252, 16, 85, 1)" />
               </View>
@@ -73,8 +104,15 @@ const Payment = () => {
               </View>
             </View>
             <View style={style.contCard}>
-              <RadioButton.Android name="gender" value="0" />
-              <View />
+              <View style={style.borderRadio}>
+                <TouchableOpacity
+                  style={[
+                    style.radioButton,
+                    paymentMethod === '3' && style.radioButtonSelected,
+                  ]}
+                  onPress={() => handlePaymentMethodChange('3')}
+                />
+              </View>
               <View style={style.iconCard3}>
                 <House name="house" size={20} color="rgba(255, 137, 0, 1)" />
               </View>
@@ -83,8 +121,16 @@ const Payment = () => {
               </View>
             </View>
             <View style={style.contCard}>
-              <RadioButton.Android name="gender" value="0" />
-              <View />
+              {/* <RadioButton.Android name="gender" value="0" /> */}
+              <View style={style.borderRadio}>
+                <TouchableOpacity
+                  style={[
+                    style.radioButton,
+                    paymentMethod === '4' && style.radioButtonSelected,
+                  ]}
+                  onPress={() => handlePaymentMethodChange('4')}
+                />
+              </View>
               <View style={style.iconCard4}>
                 <IconCard
                   name="dollar"
@@ -104,12 +150,10 @@ const Payment = () => {
               <Text style={style.reslutsText}>Total Payment</Text>
             </View>
             <View style={style.getOwnCont}>
-              <Text style={style.getOwn}>$70</Text>
+              <Text style={style.getOwn}>IDR {state.totalPayment}</Text>
             </View>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Payment')}
-            style={style.touchCheckOut}>
+          <TouchableOpacity onPress={doPayment} style={style.touchCheckOut}>
             <Text style={style.textCheckout}>Payment</Text>
           </TouchableOpacity>
         </View>
@@ -119,6 +163,29 @@ const Payment = () => {
 };
 
 const style = StyleSheet.create({
+  radioButton: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#FFF',
+  },
+  radioButtonSelected: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#4c3f91',
+  },
+  borderRadio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'blue',
+    padding: 5,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   CardCountain: {
     flexDirection: 'row',
     justifyContent: 'center',

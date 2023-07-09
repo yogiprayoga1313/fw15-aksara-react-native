@@ -11,32 +11,102 @@ import IconPass from 'react-native-vector-icons/Feather';
 import http from '../helpers/http';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
+import {useFocusEffect} from '@react-navigation/native';
+import FAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Events = ({route, navigation}) => {
   const {id} = route.params;
   const [event, setEvent] = React.useState({});
   const token = useSelector(state => state.auth.token);
+  const [eventDetail, setEventDetail] = React.useState({});
+  const [wishlistButton, setWishlistButton] = React.useState(false);
 
   React.useEffect(() => {
     const getDataEvent = async () => {
       const {data} = await http().get(`/events/${id}`);
       setEvent(data.results);
-      console.log(data);
     };
     if (id) {
       getDataEvent(id);
     }
   }, [id]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const eventId = {eventId: id};
+      const qString = new URLSearchParams(eventId).toString();
+      const fetchData = async () => {
+        const {data} = await http(token).get(`/wishlist/check?${qString}`);
+        const btnStatus = data.results;
+        if (btnStatus) {
+          setWishlistButton(true);
+        } else {
+          setWishlistButton(false);
+        }
+      };
+      fetchData();
+    }, [token, id]),
+  );
+
+  const addRemoveWishlist = async () => {
+    try {
+      if (wishlistButton) {
+        await http(token).delete(`/wishlist/${id}`);
+        setWishlistButton(false);
+        console.log('Wishlist dihapus');
+      } else {
+        const eventId = {eventId: id};
+        const qString = new URLSearchParams(eventId).toString();
+        const {data} = await http(token).post('/wishlist', qString);
+        console.log(data);
+        setWishlistButton(true);
+        console.log('Wishlist ditambahkan');
+      }
+    } catch (err) {
+      const message = err?.response?.data?.message;
+      if (message) {
+        console.log(message);
+      }
+    }
+  };
+
+  // const addRemoveWishlist = async () => {
+  //   try {
+  //     const eventId = {eventId: id};
+  //     const qString = new URLSearchParams(eventId).toString();
+  //     const {data} = await http(token).post('/wishlist', qString);
+  //     console.log(data);
+  //     if (wishlistButton) {
+  //       setWishlistButton(false);
+  //     } else {
+  //       setWishlistButton(true);
+  //     }
+  //   } catch (err) {
+  //     const message = err?.response?.data?.message;
+  //     if (message) {
+  //       console.log(message);
+  //     }
+  //   }
+  // };
   return (
     <ScrollView style={style.container}>
       <ImageBackground
         source={{uri: event?.picture || null}}
         style={style.containerImgPic}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('HomeMain')}
-          style={style.arrowBack}>
-          <IconPass name="arrow-left" size={35} color="white" />
-        </TouchableOpacity>
+        <View style={style.arrowBack}>
+          <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+            <IconPass name="arrow-left" size={35} color="white" />
+          </TouchableOpacity>
+          <View>
+            <TouchableOpacity onPress={addRemoveWishlist}>
+              {wishlistButton === true ? (
+                <FAwesome name="heart" size={30} color="red" />
+              ) : (
+                <FAwesome name="heart-o" size={30} color="#FFF" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={style.containerImg}>
           <Text style={style.textContTitle}>{event?.title}</Text>
           <View>
@@ -80,7 +150,9 @@ const Events = ({route, navigation}) => {
               </View>
               <View style={style.touchButton}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Booking')}>
+                  onPress={() =>
+                    navigation.navigate('Booking', {id: event.id})
+                  }>
                   <Text style={style.textTouch}>Buy Tickets</Text>
                 </TouchableOpacity>
               </View>
@@ -212,6 +284,9 @@ const style = StyleSheet.create({
   arrowBack: {
     paddingHorizontal: 30,
     marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 
