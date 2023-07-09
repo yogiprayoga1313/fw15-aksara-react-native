@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Platform,
 } from 'react-native';
 import React from 'react';
 import {RadioButton} from 'react-native-paper';
@@ -13,10 +14,11 @@ import {Formik} from 'formik';
 import {useSelector} from 'react-redux';
 import http from '../helpers/http';
 import moment from 'moment';
-import {Picker} from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import IconPass from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
-// import {Image} from 'react-native-paper/lib/typescript/src/components/Avatar/Avatar';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import CameraIcon from 'react-native-vector-icons/Entypo';
 
 const EditProfile = () => {
   const navigation = useNavigation();
@@ -26,9 +28,63 @@ const EditProfile = () => {
   const [editEmail, setEditEmail] = React.useState(false);
   const [editPhoneNumber, setEditPhoneNumber] = React.useState(false);
   const [editBirthDate, setEditBirthDate] = React.useState(false);
-  const [selectedPicure, setSelectedPicture] = React.useState(false);
+  const [selectedPicure, setSelectedPicture] = React.useState();
   const token = useSelector(state => state.auth.token);
-  const [slectedValue, setSelectedValue] = React.useState('developers');
+  const [slectedValue, setSelectedValue] = React.useState('');
+  const [open, setOpen] = React.useState(false);
+  const [openSelect, setOpenSelect] = React.useState(false);
+  const [professionValue, setProfessionValue] = React.useState(null);
+  const [nasionalityValue, setNasionalityValue] = React.useState(null);
+  const [profession, setProfession] = React.useState([
+    {label: 'Web Developer', value: 'webdeveloper'},
+    {label: 'Freelance', value: 'freelance'},
+  ]);
+  const [nasionality, setNasionality] = React.useState([
+    {label: 'Indonesia', value: 'indonesia'},
+    {label: 'Singapore', value: 'singapore'},
+  ]);
+
+  const getImage = async source => {
+    let results;
+    if (!source) {
+      results = await launchImageLibrary();
+    } else {
+      results = await launchCamera({
+        quality: 0.5,
+      });
+    }
+    const data = results.assets[0];
+    console.log(data);
+    if (data.uri) {
+      setSelectedPicture({
+        name: data.fileName,
+        type: data.type,
+        uri:
+          Platform.OS === 'android'
+            ? data.uri
+            : data.uri.replace('file://', ''),
+      });
+    }
+  };
+
+  const uploadFile = React.useCallback(
+    async file => {
+      const form = new FormData();
+      form.append('picture', file);
+      const {data} = await http(token).patch('/profile', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
+    [token],
+  );
+
+  React.useEffect(() => {
+    if (selectedPicure) {
+      uploadFile(selectedPicure);
+    }
+  }, [selectedPicure, uploadFile]);
 
   React.useEffect(() => {
     async function getDataProfile() {
@@ -71,6 +127,7 @@ const EditProfile = () => {
     setEditPhoneNumber(false);
     setEditUserName(false);
     setProfile(data.results);
+    setProfessionValue(data.results.profession);
   };
   return (
     <ScrollView style={style.container}>
@@ -111,13 +168,18 @@ const EditProfile = () => {
                       <IconPass name="user" size={70} color="blue" />
                     )}
                   </View>
+                  <TouchableOpacity
+                    onPress={() => getImage()}
+                    style={style.cameraIcon}>
+                    <CameraIcon name="camera" size={40} color="white" />
+                  </TouchableOpacity>
                 </View>
               </View>
               <View style={style.nameCont}>
                 <Text style={style.values}>Name</Text>
                 <TextInput
                   style={style.textInput}
-                  placeholder="Yogi Prayoga"
+                  placeholder={values.fullName}
                   onChangeText={handleChange('fullName')}
                   onBlur={handleBlur('fullName')}
                   value={values.fullName}
@@ -224,18 +286,37 @@ const EditProfile = () => {
               </View>
               <View style={style.nameCont}>
                 <Text style={style.values}>Profession</Text>
+                <View>
+                  <DropDownPicker
+                    open={open}
+                    value={values.profession}
+                    items={profession}
+                    setOpen={setOpen}
+                    setValue={setProfessionValue}
+                    setItems={setProfession}
+                    zIndex={1001}
+                    onChangeText={handleChange('profession')}
+                    onBlur={handleBlur('profession')}
+                    name="profession"
+                  />
+                </View>
               </View>
               <View style={style.nameCont}>
                 <Text style={style.values}>Nationality</Text>
-                {/* <View>
-                  <Picker
-                    selectedValue={slectedValue}
-                    onValueChange={(itemValue, itemIndex) =>
-                      setSelectedValue(itemValue)
-                    }>
-                    <Picker.item label="Freelance" value="Freelance" />
-                  </Picker>
-                </View> */}
+                <View>
+                  <DropDownPicker
+                    open={openSelect}
+                    value={nasionalityValue}
+                    items={nasionality}
+                    setOpen={setOpenSelect}
+                    setValue={setNasionalityValue}
+                    setItems={setNasionality}
+                    zIndex={1000}
+                    onChangeText={handleChange('nationality')}
+                    onBlur={handleBlur('nationality')}
+                    name="nationality"
+                  />
+                </View>
               </View>
               <View style={style.nameCont}>
                 <Text style={style.values}>Birthday Date</Text>
@@ -292,6 +373,10 @@ const style = StyleSheet.create({
     borderRadius: 60,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
+  },
+  cameraIcon: {
+    position: 'absolute',
   },
   fotoCont: {
     justifyContent: 'center',

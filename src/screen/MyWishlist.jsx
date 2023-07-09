@@ -8,9 +8,37 @@ import {
 import React from 'react';
 import IconPass from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import http from '../helpers/http';
+import {useFocusEffect} from '@react-navigation/native';
+import moment from 'moment';
+import NoData from '../components/NoData';
 
-const MyWishlist = () => {
-  const navigation = useNavigation();
+const MyWishlist = ({navigation}) => {
+  const [myWishlist, setMyWishlist] = React.useState([]);
+  const token = useSelector(state => state.auth.token);
+  const [wishlistButton, setWishlistButton] = React.useState(false);
+
+  const getWishlists = React.useCallback(async () => {
+    const {data} = await http(token).get('/wishlist');
+
+    console.log(data);
+    setMyWishlist(data.results);
+  }, [token]);
+
+  React.useEffect(() => {
+    getWishlists();
+  }, [getWishlists]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const {data} = await http(token).get('/wishlist');
+        setMyWishlist(data.results);
+      };
+      fetchData();
+    }, [token]),
+  );
 
   return (
     <ScrollView style={style.container}>
@@ -22,7 +50,33 @@ const MyWishlist = () => {
       </View>
       <View style={style.contValue}>
         <View style={style.contItemValue}>
-          <View style={style.contValueMb}>
+          {myWishlist.length < 1 && (
+            <NoData noItem="tickets bought" noItemSub="bought any ticket" />
+          )}
+          {myWishlist.map(item => {
+            return (
+              <View key={item.id} style={style.contValueMb}>
+                <View style={style.mbTextCont}>
+                  <View style={style.textContDay}>
+                    <Text style={style.textDay}>
+                      {moment(item.date).format('DD')}
+                    </Text>
+                    <Text>{moment(item.date).format('ddd')}</Text>
+                  </View>
+                </View>
+                <View style={style.contItemMb}>
+                  <View>
+                    <Text style={style.textTitle}>{item?.title}</Text>
+                  </View>
+                  <View style={style.contTime}>
+                    <Text>{item?.cityName}, Indonesia</Text>
+                    <Text>{moment(item.date).format('ddd, DD-MMMM-YYYY')}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+          {/* <View style={style.contValueMb}>
             <View style={style.mbTextCont}>
               <View style={style.textContDay}>
                 <Text style={style.textDay}>15</Text>
@@ -55,24 +109,7 @@ const MyWishlist = () => {
                 <Text>Wed, 15 Nov, 4.00 PM</Text>
               </View>
             </View>
-          </View>
-          <View style={style.contValueMb}>
-            <View style={style.mbTextCont}>
-              <View style={style.textContDay}>
-                <Text style={style.textDay}>15</Text>
-                <Text>Wed</Text>
-              </View>
-            </View>
-            <View style={style.contItemMb}>
-              <View>
-                <Text style={style.textTitle}>Sight & Sound Exhibition</Text>
-              </View>
-              <View style={style.contTime}>
-                <Text>Jakarta, Indonesia</Text>
-                <Text>Wed, 15 Nov, 4.00 PM</Text>
-              </View>
-            </View>
-          </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>
@@ -94,9 +131,9 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     padding: 30,
-    gap: 50,
+    // gap: 50,
     height: 700,
   },
   month: {

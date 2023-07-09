@@ -8,8 +8,8 @@ const http = token => {
   }
   console.log(headers);
   const instance = axios.create({
-    baseURL: BACKEND_URL,
-    // baseURL: 'https://lime-frail-crow.cyclic.app',
+    // baseURL: BACKEND_URL,
+    baseURL: 'https://lime-frail-crow.cyclic.app',
     headers,
   });
   return instance;
