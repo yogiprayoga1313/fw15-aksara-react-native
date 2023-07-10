@@ -20,7 +20,9 @@ const ManageEvent = () => {
         <Text style={style.textEditMb}>Manage Event</Text>
       </View>
       <View style={style.contValue}>
-        <TouchableOpacity style={style.month}>
+        <TouchableOpacity
+          style={style.month}
+          onPress={() => navigation.navigate('CreateEvent')}>
           <View>
             <Text style={style.textMonth}>Create</Text>
           </View>

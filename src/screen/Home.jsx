@@ -23,6 +23,7 @@ import EditProfile from './EditProfile';
 import ChangePassword from './ChangePassword';
 import ManageEvent from './ManageEvent';
 import Booking from './Booking';
+import CreateEvent from './CreateEvent';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,8 +49,12 @@ const Home = () => {
 
   React.useEffect(() => {
     async function getDataEvents() {
-      const {data} = await http().get('/events?limit=5&sortBy=DESC');
-      setEvents(data.results);
+      try {
+        const {data} = await http().get('/events?limit=5&sortBy=DESC');
+        setEvents(data.results);
+      } catch (err) {
+        console.log('Error', err);
+      }
     }
     getDataEvents();
   }, []);
@@ -75,27 +80,25 @@ const Home = () => {
         <ScrollView horizontal={true} style={style.wrapperBox}>
           {events.map(event => {
             return (
-              <>
-                <View style={style.containerTextNew} key={event.id}>
-                  <Image
-                    source={{uri: event?.picture || null}}
-                    style={style.styleImage}
-                  />
-                  <View style={style.warapperTextCont}>
-                    <Text style={style.textNew}>
-                      {moment(event.date).format('ddd, DD-MMMM-YYYY')}
-                    </Text>
-                    <Text style={style.textContaninerNew}>{event.title}</Text>
-                    <TouchableOpacity
-                      style={style.arrow}
-                      onPress={() =>
-                        navigation.navigate('Events', {id: event.id})
-                      }>
-                      <IconPass name="arrow-right" size={30} color="white" />
-                    </TouchableOpacity>
-                  </View>
+              <View style={style.containerTextNew} key={`events-${event.id}`}>
+                <Image
+                  source={{uri: event?.picture || null}}
+                  style={style.styleImage}
+                />
+                <View style={style.warapperTextCont}>
+                  <Text style={style.textNew}>
+                    {moment(event.date).format('ddd, DD-MMMM-YYYY')}
+                  </Text>
+                  <Text style={style.textContaninerNew}>{event.title}</Text>
+                  <TouchableOpacity
+                    style={style.arrow}
+                    onPress={() =>
+                      navigation.navigate('Events', {id: event.id})
+                    }>
+                    <IconPass name="arrow-right" size={30} color="white" />
+                  </TouchableOpacity>
                 </View>
-              </>
+              </View>
             );
           })}
         </ScrollView>
@@ -199,6 +202,7 @@ const HomeStack = () => {
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="CreateEvent" component={CreateEvent} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="Booking" component={Booking} />

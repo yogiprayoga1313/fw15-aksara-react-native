@@ -22,8 +22,12 @@ const Booking = ({route, navigation}) => {
 
   React.useEffect(() => {
     const getSections = async () => {
-      const {data} = await http(token).get('/section');
-      setSections(data.results);
+      try {
+        const {data} = await http(token).get('/section');
+        setSections(data.results);
+      } catch (error) {
+        console.log('Error', error);
+      }
     };
     getSections();
   }, [token]);

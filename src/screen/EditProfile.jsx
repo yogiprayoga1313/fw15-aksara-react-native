@@ -14,11 +14,13 @@ import {Formik} from 'formik';
 import {useSelector} from 'react-redux';
 import http from '../helpers/http';
 import moment from 'moment';
-import DropDownPicker from 'react-native-dropdown-picker';
+import DatePicker from 'react-native-date-picker';
 import IconPass from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import CameraIcon from 'react-native-vector-icons/Entypo';
+import SelectDropdown from 'react-native-select-dropdown';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const EditProfile = () => {
   const navigation = useNavigation();
@@ -27,22 +29,15 @@ const EditProfile = () => {
   const [editUserName, setEditUserName] = React.useState(false);
   const [editEmail, setEditEmail] = React.useState(false);
   const [editPhoneNumber, setEditPhoneNumber] = React.useState(false);
-  const [editBirthDate, setEditBirthDate] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const [selectedPicure, setSelectedPicture] = React.useState();
   const token = useSelector(state => state.auth.token);
-  const [slectedValue, setSelectedValue] = React.useState('');
-  const [open, setOpen] = React.useState(false);
-  const [openSelect, setOpenSelect] = React.useState(false);
-  const [professionValue, setProfessionValue] = React.useState(null);
-  const [nasionalityValue, setNasionalityValue] = React.useState(null);
-  const [profession, setProfession] = React.useState([
-    {label: 'Web Developer', value: 'webdeveloper'},
-    {label: 'Freelance', value: 'freelance'},
-  ]);
-  const [nasionality, setNasionality] = React.useState([
-    {label: 'Indonesia', value: 'indonesia'},
-    {label: 'Singapore', value: 'singapore'},
-  ]);
+  const [newProfession, setNewProfession] = React.useState('');
+  const [newNationality, setNewNationality] = React.useState('');
+  const [date, setDate] = React.useState(new Date());
+
+  const selectProfession = ['Programmer', 'Designer', 'Analyst'];
+  const selectNationality = ['Indonesia', 'Malaysia', 'Singapura'];
 
   const getImage = async source => {
     let results;
@@ -99,35 +94,41 @@ const EditProfile = () => {
     setGender(value);
   };
 
-  React.useEffect(() => {
-    console.log(selectedPicure);
-  }, [selectedPicure]);
-
   const editProfileUser = async values => {
     const form = new FormData();
     Object.keys(values).forEach(key => {
       if (values[key]) {
-        if (key === 'birthDate') {
-          form.append(key, moment(values[key]).format('YYYY/MM/DD'));
-        } else {
-          form.append(key, values[key]);
-        }
+        form.append(key, values[key]);
       }
     });
-    if (selectedPicure) {
-      form.append('picture', selectedPicure);
+
+    // if (selectedPicure) {
+    //   form.append('picture', selectedPicure);
+    // }
+
+    if (newProfession) {
+      form.append('profession', newProfession);
     }
+
+    if (newNationality) {
+      form.append('nationality', newNationality);
+    }
+
+    if (date) {
+      form.append('birthDate', moment(date).format('YYYY-MM-DD'));
+    }
+
     const {data} = await http(token).patch('/profile', form, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-    setEditBirthDate(false);
+
+    setProfile(data.results);
     setEditEmail(false);
     setEditPhoneNumber(false);
     setEditUserName(false);
-    setProfile(data.results);
-    setProfessionValue(data.results.profession);
+    // setProfessionValue(data.results.profession);
   };
   return (
     <ScrollView style={style.container}>
@@ -143,10 +144,10 @@ const EditProfile = () => {
           userName: profile?.userName,
           email: profile?.email,
           phoneNumber: profile?.phoneNumber,
-          nationality: profile.nationality,
-          profession: profile.profession,
+          nationality: profile?.nationality,
+          profession: profile?.profession,
           gender: profile?.gender ? '1' : '0',
-          birthDate: profile.birthDate,
+          birthDate: profile?.birthDate,
         }}
         onSubmit={editProfileUser}
         enableReinitialize>
@@ -156,15 +157,21 @@ const EditProfile = () => {
               <View style={style.fotoCont}>
                 <View style={style.foto}>
                   <View style={style.fotoIcon}>
-                    {profile.picture && (
+                    {selectedPicure ? (
                       <Image
                         style={style.fotoProfile}
-                        source={{uri: profile?.picture}}
+                        src={selectedPicure.uri}
                         width={90}
                         height={90}
                       />
-                    )}
-                    {!profile.picture && (
+                    ) : profile.picture ? (
+                      <Image
+                        style={style.fotoProfile}
+                        source={{uri: profile.picture}}
+                        width={90}
+                        height={90}
+                      />
+                    ) : (
                       <IconPass name="user" size={70} color="blue" />
                     )}
                   </View>
@@ -287,39 +294,100 @@ const EditProfile = () => {
               <View style={style.nameCont}>
                 <Text style={style.values}>Profession</Text>
                 <View>
-                  <DropDownPicker
-                    open={open}
-                    value={values.profession}
-                    items={profession}
-                    setOpen={setOpen}
-                    setValue={setProfessionValue}
-                    setItems={setProfession}
-                    zIndex={1001}
-                    onChangeText={handleChange('profession')}
-                    onBlur={handleBlur('profession')}
-                    name="profession"
+                  <SelectDropdown
+                    data={selectProfession}
+                    defaultButtonText={profile?.profession}
+                    dropdownStyle={style.drStyle}
+                    buttonStyle={style.selectDropdowns}
+                    buttonTextStyle={style.btStyle}
+                    rowStyle={style.rwStyle}
+                    rowTextStyle={style.rtStyle}
+                    renderDropdownIcon={isOpened => {
+                      return (
+                        <FeatherIcon
+                          name={isOpened ? 'chevron-up' : 'chevron-down'}
+                          size={25}
+                          color="#000"
+                        />
+                      );
+                    }}
+                    onSelect={selectedItem => {
+                      setNewProfession(selectedItem);
+                    }}
+                    buttonTextAfterSelection={selectedItem => {
+                      return selectedItem;
+                    }}
+                    rowTextForSelection={item => {
+                      return item;
+                    }}
                   />
                 </View>
               </View>
               <View style={style.nameCont}>
                 <Text style={style.values}>Nationality</Text>
                 <View>
-                  <DropDownPicker
-                    open={openSelect}
-                    value={nasionalityValue}
-                    items={nasionality}
-                    setOpen={setOpenSelect}
-                    setValue={setNasionalityValue}
-                    setItems={setNasionality}
-                    zIndex={1000}
-                    onChangeText={handleChange('nationality')}
-                    onBlur={handleBlur('nationality')}
-                    name="nationality"
+                  <SelectDropdown
+                    data={selectNationality}
+                    defaultButtonText={profile?.nationality}
+                    dropdownStyle={style.drStyle}
+                    buttonStyle={style.selectDropdowns}
+                    buttonTextStyle={style.btStyle}
+                    rowStyle={style.rwStyle}
+                    rowTextStyle={style.rtStyle}
+                    renderDropdownIcon={isOpened => {
+                      return (
+                        <FeatherIcon
+                          name={isOpened ? 'chevron-up' : 'chevron-down'}
+                          size={25}
+                          color="#000"
+                        />
+                      );
+                    }}
+                    onSelect={selectedItem => {
+                      setNewNationality(selectedItem);
+                    }}
+                    buttonTextAfterSelection={selectedItem => {
+                      return selectedItem;
+                    }}
+                    rowTextForSelection={item => {
+                      return item;
+                    }}
                   />
                 </View>
               </View>
               <View style={style.nameCont}>
                 <Text style={style.values}>Birthday Date</Text>
+                <View style={style.textBetween}>
+                  <View style={style.BirthDateWrapper}>
+                    <View style={style.DateWrapper}>
+                      <Text>
+                        {profile?.birthDate
+                          ? moment(profile?.birthDate).format('DD/MM/YYYY')
+                          : '-'}
+                      </Text>
+                    </View>
+                  </View>
+                  <DatePicker
+                    modal
+                    open={open}
+                    mode="date"
+                    date={date}
+                    onConfirm={newDate => {
+                      setOpen(false);
+                      setDate(newDate);
+                    }}
+                    onCancel={() => {
+                      setOpen(false);
+                    }}
+                  />
+                  <View>
+                    <Text
+                      style={style.EditBtnStyle}
+                      onPress={() => setOpen(true)}>
+                      edit
+                    </Text>
+                  </View>
+                </View>
               </View>
               <TouchableOpacity
                 style={style.touchCheckOut}
@@ -335,6 +403,46 @@ const EditProfile = () => {
 };
 
 const style = StyleSheet.create({
+  EditBtnStyle: {
+    color: 'blue',
+  },
+  DateWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 5,
+    borderRadius: 10,
+  },
+  BirthDateWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  textBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  drStyle: {
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+  },
+  btStyle: {
+    color: '#000',
+    textAlign: 'left',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+  },
+  rwStyle: {
+    backgroundColor: '#FFF',
+    borderBottomColor: '#FFF',
+  },
+  rtStyle: {
+    color: '#000',
+    textAlign: 'left',
+    fontFamily: 'Poppins-Regular',
+  },
   container: {
     backgroundColor: '#76BA99',
   },

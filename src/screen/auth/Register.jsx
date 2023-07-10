@@ -45,6 +45,7 @@ const Register = ({secureTextEntry}) => {
       navigation.replace('Login');
     }, 3000);
   }
+
   return (
     <View style={style.container}>
       <View style={style.boxContainer}>
@@ -153,6 +154,9 @@ const Register = ({secureTextEntry}) => {
               />
               <Text style={style.text2}>Accept terms and condition</Text>
             </View>
+            {errors.termAndCondition && touched.termAndCondition && (
+              <Text style={style.errorsText}>{errors.termAndCondition}</Text>
+            )}
             <TouchableOpacity style={style.button} onPress={handleSubmit}>
               <Text style={style.buttonText}>Sign Up</Text>
             </TouchableOpacity>
@@ -188,6 +192,9 @@ const style = StyleSheet.create({
   text3: {
     color: '#3366FF',
     fontWeight: 'bold',
+  },
+  errorsText: {
+    color: '#FF9191',
   },
   box: {
     opacity: 0.6,
