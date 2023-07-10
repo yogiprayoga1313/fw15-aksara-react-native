@@ -85,7 +85,6 @@ const EditProfile = () => {
     async function getDataProfile() {
       const {data} = await http(token).get('/profile');
       setProfile(data.results);
-      console.log(data);
     }
     getDataProfile();
   }, [token]);
@@ -101,10 +100,6 @@ const EditProfile = () => {
         form.append(key, values[key]);
       }
     });
-
-    // if (selectedPicure) {
-    //   form.append('picture', selectedPicure);
-    // }
 
     if (newProfession) {
       form.append('profession', newProfession);
@@ -128,7 +123,6 @@ const EditProfile = () => {
     setEditEmail(false);
     setEditPhoneNumber(false);
     setEditUserName(false);
-    // setProfessionValue(data.results.profession);
   };
   return (
     <ScrollView style={style.container}>
