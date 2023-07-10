@@ -33,7 +33,7 @@ const MyWishlist = ({navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const {data} = await http(token).get('/wishlist');
+        const {data} = await http(token).get('/wishlist?sortBy=DESC&limit=3');
         setMyWishlist(data.results);
       };
       fetchData();

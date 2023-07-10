@@ -23,30 +23,34 @@ const Events = ({route, navigation}) => {
 
   React.useEffect(() => {
     const getDataEvent = async () => {
-      const {data} = await http().get(`/events/${id}`);
-      setEvent(data.results);
+      try {
+        const {data} = await http().get(`/events/${id}`);
+        setEvent(data.results);
+      } catch (err) {
+        console.log('Error', err);
+      }
     };
     if (id) {
       getDataEvent(id);
     }
   }, [id]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const eventId = {eventId: id};
-      const qString = new URLSearchParams(eventId).toString();
-      const fetchData = async () => {
-        const {data} = await http(token).get(`/wishlist/check?${qString}`);
-        const btnStatus = data.results;
-        if (btnStatus) {
-          setWishlistButton(true);
-        } else {
-          setWishlistButton(false);
-        }
-      };
-      fetchData();
-    }, [token, id]),
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const eventId = {eventId: id};
+  //     const qString = new URLSearchParams(eventId).toString();
+  //     const fetchData = async () => {
+  //       const {data} = await http(token).get(`/wishlist${qString}`);
+  //       const btnStatus = data.results;
+  //       if (btnStatus) {
+  //         setWishlistButton(true);
+  //       } else {
+  //         setWishlistButton(false);
+  //       }
+  //     };
+  //     fetchData();
+  //   }, [token, id]),
+  // );
 
   const addRemoveWishlist = async () => {
     try {
@@ -90,76 +94,78 @@ const Events = ({route, navigation}) => {
   // };
   return (
     <ScrollView style={style.container}>
-      <ImageBackground
-        source={{uri: event?.picture || null}}
-        style={style.containerImgPic}>
-        <View style={style.arrowBack}>
-          <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
-            <IconPass name="arrow-left" size={35} color="white" />
-          </TouchableOpacity>
-          <View>
-            <TouchableOpacity onPress={addRemoveWishlist}>
-              {wishlistButton === true ? (
-                <FAwesome name="heart" size={30} color="red" />
-              ) : (
-                <FAwesome name="heart-o" size={30} color="#FFF" />
-              )}
+      {event?.picture ? (
+        <ImageBackground
+          source={{uri: event.picture}}
+          style={style.containerImgPic}>
+          <View style={style.arrowBack}>
+            <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+              <IconPass name="arrow-left" size={35} color="white" />
             </TouchableOpacity>
+            <View>
+              <TouchableOpacity onPress={addRemoveWishlist}>
+                {wishlistButton === true ? (
+                  <FAwesome name="heart" size={30} color="red" />
+                ) : (
+                  <FAwesome name="heart-o" size={30} color="#FFF" />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <View style={style.containerImg}>
-          <Text style={style.textContTitle}>{event?.title}</Text>
-          <View>
-            <View />
-            <Text style={style.textContLoc}>{event?.cityName}</Text>
+          <View style={style.containerImg}>
+            <Text style={style.textContTitle}>{event?.title}</Text>
+            <View>
+              <View />
+              <Text style={style.textContLoc}>{event?.cityName}</Text>
+            </View>
+            <View>
+              <View />
+              <Text style={style.textContLoc}>
+                {moment(event?.date).format('ddd, DD MMM YYYY, HH:mm')}
+              </Text>
+            </View>
+            <View>
+              <Text style={style.textContLoc}>Attendees</Text>
+            </View>
           </View>
-          <View>
-            <View />
-            <Text style={style.textContLoc}>
-              {moment(event?.date).format('ddd, DD MMM YYYY, HH:mm')}
-            </Text>
-          </View>
-          <View>
-            <Text style={style.textContLoc}>Attendees</Text>
-          </View>
-        </View>
-        <View style={style.contDetail}>
-          <View style={style.contTextDetail}>
-            <Text style={style.textEvents}>Event Detail</Text>
-            <Text style={style.textDetailEvents}>
-              {event?.descriptions && event.descriptions.length > 200
-                ? event.descriptions.substring(0, 200) + '...'
-                : event?.descriptions}
-            </Text>
-          </View>
-          <View style={style.contOut}>
-            <View style={style.contOutBtn}>
-              <View style={style.boxOut}>
-                <View style={style.boxTic}>
-                  <Text style={style.textOut}>Ticket</Text>
-                  <Text style={style.textItem}>VIP</Text>
+          <View style={style.contDetail}>
+            <View style={style.contTextDetail}>
+              <Text style={style.textEvents}>Event Detail</Text>
+              <Text style={style.textDetailEvents}>
+                {event?.descriptions && event.descriptions.length > 200
+                  ? event.descriptions.substring(0, 200) + '...'
+                  : event?.descriptions}
+              </Text>
+            </View>
+            <View style={style.contOut}>
+              <View style={style.contOutBtn}>
+                <View style={style.boxOut}>
+                  <View style={style.boxTic}>
+                    <Text style={style.textOut}>Ticket</Text>
+                    <Text style={style.textItem}>VIP</Text>
+                  </View>
+                  <View style={style.boxQty}>
+                    <Text style={style.textOut}>Quantity</Text>
+                    <Text style={style.textItem}>2</Text>
+                  </View>
+                  <View style={style.boxPrc}>
+                    <Text style={style.textOut}>Price</Text>
+                    <Text style={style.textItem}>$70</Text>
+                  </View>
                 </View>
-                <View style={style.boxQty}>
-                  <Text style={style.textOut}>Quantity</Text>
-                  <Text style={style.textItem}>2</Text>
+                <View style={style.touchButton}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Booking', {id: event.id})
+                    }>
+                    <Text style={style.textTouch}>Buy Tickets</Text>
+                  </TouchableOpacity>
                 </View>
-                <View style={style.boxPrc}>
-                  <Text style={style.textOut}>Price</Text>
-                  <Text style={style.textItem}>$70</Text>
-                </View>
-              </View>
-              <View style={style.touchButton}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('Booking', {id: event.id})
-                  }>
-                  <Text style={style.textTouch}>Buy Tickets</Text>
-                </TouchableOpacity>
               </View>
             </View>
           </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
+      ) : null}
     </ScrollView>
   );
 };
