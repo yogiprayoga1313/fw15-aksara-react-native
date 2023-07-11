@@ -13,7 +13,7 @@ import MyWishlist from './MyWishlist';
 import ManageEvent from './ManageEvent';
 import {useDispatch, useSelector} from 'react-redux';
 import ResetPassword from './auth/ResetPassword';
-import {createDrawerNavigator, DrawerContent} from '@react-navigation/drawer';
+import {createDrawerNavigator, drawerContent} from '@react-navigation/drawer';
 import Setting from './Setting';
 import {logout as logoutAction} from '../redux/reducers/auth';
 import ProfileDrawer from '../components/ProfileDrawer';
@@ -31,8 +31,9 @@ function MyDrawer(props) {
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
+        drawerStyle: {width: 300},
       }}>
-      {/* // drawerContent={props => <ProfileDrawer {...props} />}> */}
+      {/* drawerContent={props => <ProfileDrawer {...props} />}> */}
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="My Booking" component={MyBooking} />
@@ -43,10 +44,8 @@ function MyDrawer(props) {
         name="Logout"
         component={DoLogout}
         options={{
-          drawerLabel: ({color}) => (
-            <>
-              <Text style={{color: 'red', fontWeight: 'bold'}}>Logout</Text>
-            </>
+          drawerLabel: () => (
+            <Text style={{color: 'red', fontWeight: 'bold'}}>Logout</Text>
           ),
         }}
       />
