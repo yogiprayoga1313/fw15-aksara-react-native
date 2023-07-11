@@ -1,12 +1,7 @@
 import {View, Text, Image, StyleSheet} from 'react-native';
 import React from 'react';
-import {
-  DrawerContent,
-  DrawerContentScrollView,
-  createDrawerNavigator,
-} from '@react-navigation/drawer';
-import {useDispatch, useSelector} from 'react-redux';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {DrawerContentScrollView} from '@react-navigation/drawer';
+import {useSelector} from 'react-redux';
 import http from '../helpers/http';
 
 const ProfileDrawer = props => {
