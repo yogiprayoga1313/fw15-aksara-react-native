@@ -24,15 +24,35 @@ import ChangePassword from './ChangePassword';
 import ManageEvent from './ManageEvent';
 import Booking from './Booking';
 import CreateEvent from './CreateEvent';
+import EditEventUser from './EditArticle';
+import {Formik} from 'formik';
 
 const Stack = createNativeStackNavigator();
 
 const Home = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const [events, setEvents] = React.useState([]);
   const deviceToken = useSelector(state => state.deviceToken.data);
   const token = useSelector(state => state.auth.token);
+  const [sort, setSort] = React.useState('ASC');
+  const [sortBy, setSortBy] = React.useState('title');
+  const [searchText, setSearchText] = React.useState('');
+
+  const searchEvents = async () => {
+    try {
+      // Buat query parameter pencarian berdasarkan nilai input teks
+      const searchQuery = searchText ? `search=${searchText}` : '';
+
+      // Kirim permintaan pencarian ke server
+      const {data} = await http(token).get(
+        `/events?${searchQuery}&limit=5&sortBy=${sortBy}&page=1&sort=${sort}`,
+      );
+      console.log(data);
+      setEvents(data.results);
+    } catch (err) {
+      console.log('Error', err);
+    }
+  };
 
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -50,14 +70,16 @@ const Home = () => {
   React.useEffect(() => {
     async function getDataEvents() {
       try {
-        const {data} = await http().get('/events?limit=5&sortBy=DESC');
+        const {data} = await http(token).get(
+          '/events?limit=5&sortBy=DESC&page=1',
+        );
         setEvents(data.results);
       } catch (err) {
         console.log('Error', err);
       }
     }
     getDataEvents();
-  }, []);
+  }, [token, sortBy, sort]);
 
   return (
     <ScrollView style={style.wrapper}>
@@ -66,131 +88,163 @@ const Home = () => {
           <Icon name="bars" size={40} color="white" />
         </TouchableOpacity>
       </View>
-      <View>
-        <TextInput
-          style={style.textInput}
-          placeholderTextColor="white"
-          placeholder="Search Event..."
-        />
-      </View>
-      <View style={style.contsiner} horizontal={false}>
-        <View>
-          <Text style={style.containerText}>Events For You</Text>
-        </View>
-        <ScrollView horizontal={true} style={style.wrapperBox}>
-          {events.map(event => {
-            return (
-              <View style={style.containerTextNew} key={`events-${event.id}`}>
-                <Image
-                  source={{uri: event?.picture || null}}
-                  style={style.styleImage}
-                />
-                <View style={style.warapperTextCont}>
-                  <Text style={style.textNew}>
-                    {moment(event.date).format('ddd, DD-MMMM-YYYY')}
-                  </Text>
-                  <Text style={style.textContaninerNew}>{event.title}</Text>
-                  <TouchableOpacity
-                    style={style.arrow}
-                    onPress={() =>
-                      navigation.navigate('Events', {id: event.id})
-                    }>
-                    <IconPass name="arrow-right" size={30} color="white" />
+      <Formik
+        initialValues={{
+          serachName: '',
+        }}>
+        {({handleBlur, handleChange, handleSubmit}) => (
+          <>
+            <View>
+              <TextInput
+                style={style.textInput}
+                placeholderTextColor="white"
+                placeholder="Search Event..."
+                onBlur={handleBlur('searchName')}
+                onChangeText={text => setSearchText(text)}
+                value={searchText}
+              />
+              {/* <TouchableOpacity onPress={searchEvents}>
+                <IconPass name="search" size={30} />
+              </TouchableOpacity> */}
+            </View>
+            <View style={style.contsiner} horizontal={false}>
+              <View>
+                <View style={style.filter}>
+                  <Text style={style.containerText}>Events For You</Text>
+                  <TouchableOpacity style={style.filterStyle}>
+                    <IconPass name="filter" size={25} color="blue" />
                   </TouchableOpacity>
                 </View>
               </View>
-            );
-          })}
-        </ScrollView>
-        <View>
-          <Text style={style.containerText}>Discover</Text>
-        </View>
-        <ScrollView style={style.wrapperBox} horizontal={true}>
-          <View style={style.wrapperBoxNew}>
-            <TouchableOpacity style={style.wrapperBoxDiscover}>
-              <View style={style.iconDiscover}>
-                <IconPass name="map-pin" size={20} color="purple" />
+              <ScrollView horizontal={true} style={style.wrapperBox}>
+                {events.map(event => {
+                  return (
+                    <View
+                      style={style.containerTextNew}
+                      key={`events-${event.id}`}>
+                      <Image
+                        source={{uri: event?.picture || null}}
+                        style={style.styleImage}
+                      />
+                      <View style={style.warapperTextCont}>
+                        <Text style={style.textNew}>
+                          {moment(event.date).format('ddd, DD-MMMM-YYYY')}
+                        </Text>
+                        <Text style={style.textContaninerNew}>
+                          {event.title}
+                        </Text>
+                        <TouchableOpacity
+                          style={style.arrow}
+                          onPress={() =>
+                            navigation.navigate('Events', {id: event.id})
+                          }>
+                          <IconPass
+                            name="arrow-right"
+                            size={30}
+                            color="white"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+              <View>
+                <Text style={style.containerText}>Discover</Text>
               </View>
-              <Text style={style.textDiscover}>YOUR AREA</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity style={style.wrapperBoxNew}>
-            <View style={style.wrapperBoxDiscover}>
-              <View style={style.iconDiscoverMusic}>
-                <IconPass
-                  name="music"
-                  size={20}
-                  color="rgba(255, 61, 113, 1)"
-                />
+              <ScrollView style={style.wrapperBox} horizontal={true}>
+                <View style={style.wrapperBoxNew}>
+                  <TouchableOpacity style={style.wrapperBoxDiscover}>
+                    <View style={style.iconDiscover}>
+                      <IconPass name="map-pin" size={20} color="purple" />
+                    </View>
+                    <Text style={style.textDiscover}>YOUR AREA</Text>
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={style.wrapperBoxNew}>
+                  <View style={style.wrapperBoxDiscover}>
+                    <View style={style.iconDiscoverMusic}>
+                      <IconPass
+                        name="music"
+                        size={20}
+                        color="rgba(255, 61, 113, 1)"
+                      />
+                    </View>
+                    <Text style={style.textDiscoverMusic}>MUSIC</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={style.wrapperBoxNew}>
+                  <View style={style.wrapperBoxDiscover}>
+                    <View style={style.iconDiscoverSport}>
+                      <IconPass
+                        name="truck"
+                        size={20}
+                        color="rgba(255, 137, 0, 1)"
+                      />
+                    </View>
+                    <Text style={style.textDiscoverSport}>SPORT</Text>
+                  </View>
+                </TouchableOpacity>
+              </ScrollView>
+              <View style={style.containerUpcoming}>
+                <Text style={style.containerTextUpcoming}>Upcoming</Text>
+                <Text>See all</Text>
               </View>
-              <Text style={style.textDiscoverMusic}>MUSIC</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.wrapperBoxNew}>
-            <View style={style.wrapperBoxDiscover}>
-              <View style={style.iconDiscoverSport}>
-                <IconPass name="truck" size={20} color="rgba(255, 137, 0, 1)" />
+              <View style={style.monthTextCont}>
+                <Text style={style.monthText}>SEP</Text>
               </View>
-              <Text style={style.textDiscoverSport}>SPORT</Text>
-            </View>
-          </TouchableOpacity>
-        </ScrollView>
-        <View style={style.containerUpcoming}>
-          <Text style={style.containerTextUpcoming}>Upcoming</Text>
-          <Text>See all</Text>
-        </View>
-        <View style={style.monthTextCont}>
-          <Text style={style.monthText}>SEP</Text>
-        </View>
-        <View style={style.upcomingBox}>
-          <View style={style.upcomingTextCont}>
-            <View style={style.textContDay}>
-              <Text style={style.textDay}>15</Text>
-              <Text>Wed</Text>
-            </View>
-          </View>
-          <View style={style.contentUpcoming}>
-            <View style={style.containerTextNew}>
-              <View style={style.warapperTextCont}>
-                <Text style={style.textNew}>Wed, 15 Nov, 4:00 PM</Text>
-                <Text style={style.textContaninerNew}>
-                  Sights & Sounds Exhibition
-                </Text>
+              <View style={style.upcomingBox}>
+                <View style={style.upcomingTextCont}>
+                  <View style={style.textContDay}>
+                    <Text style={style.textDay}>15</Text>
+                    <Text>Wed</Text>
+                  </View>
+                </View>
+                <View style={style.contentUpcoming}>
+                  <View style={style.containerTextNew}>
+                    <View style={style.warapperTextCont}>
+                      <Text style={style.textNew}>Wed, 15 Nov, 4:00 PM</Text>
+                      <Text style={style.textContaninerNew}>
+                        Sights & Sounds Exhibition
+                      </Text>
+                    </View>
+                    <TouchableOpacity style={style.button1}>
+                      {/* <Text>Next</Text> */}
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity style={style.buttonUpcoming}>
+                    <Text style={style.textButton}>Show All 5 Events</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <TouchableOpacity style={style.button1}>
-                {/* <Text>Next</Text> */}
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={style.buttonUpcoming}>
-              <Text style={style.textButton}>Show All 5 Events</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={style.upcomingBox}>
-          <View style={style.upcomingTextCont}>
-            <View style={style.textContDay}>
-              <Text style={style.textDay}>16</Text>
-              <Text>Thu</Text>
-            </View>
-          </View>
-          <View style={style.contentUpcoming}>
-            <View style={style.containerTextNew}>
-              <View style={style.warapperTextCont}>
-                <Text style={style.textNew}>Wed, 15 Nov, 4:00 PM</Text>
-                <Text style={style.textContaninerNew}>
-                  Sights & Sounds Exhibition
-                </Text>
+              <View style={style.upcomingBox}>
+                <View style={style.upcomingTextCont}>
+                  <View style={style.textContDay}>
+                    <Text style={style.textDay}>16</Text>
+                    <Text>Thu</Text>
+                  </View>
+                </View>
+                <View style={style.contentUpcoming}>
+                  <View style={style.containerTextNew}>
+                    <View style={style.warapperTextCont}>
+                      <Text style={style.textNew}>Wed, 15 Nov, 4:00 PM</Text>
+                      <Text style={style.textContaninerNew}>
+                        Sights & Sounds Exhibition
+                      </Text>
+                    </View>
+                    <TouchableOpacity style={style.button1}>
+                      {/* <Text>Next</Text> */}
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity style={style.buttonUpcoming}>
+                    <Text style={style.textButton}>Show All 5 Events</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <TouchableOpacity style={style.button1}>
-                {/* <Text>Next</Text> */}
-              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={style.buttonUpcoming}>
-              <Text style={style.textButton}>Show All 5 Events</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+          </>
+        )}
+      </Formik>
     </ScrollView>
   );
 };
@@ -207,11 +261,31 @@ const HomeStack = () => {
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="Booking" component={Booking} />
       <Stack.Screen name="ManageEvent" component={ManageEvent} />
+      <Stack.Screen name="EditArticleUser" component={EditEventUser} />
     </Stack.Navigator>
   );
 };
 
 const style = StyleSheet.create({
+  filterStyle: {
+    marginLeft: 90,
+    backgroundColor: 'white',
+    width: 50,
+    height: 50,
+    borderRadius: 9,
+    shadowColor: 'black',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.7,
+    shadowRadius: 10,
+    elevation: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-beetwen',
+  },
   wrapper: {
     backgroundColor: '#76BA99',
     gap: 30,
