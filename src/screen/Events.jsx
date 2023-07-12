@@ -11,8 +11,8 @@ import IconPass from 'react-native-vector-icons/Feather';
 import http from '../helpers/http';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
-import {useFocusEffect} from '@react-navigation/native';
 import FAwesome from 'react-native-vector-icons/FontAwesome';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Events = ({route, navigation}) => {
   const {id} = route.params;
@@ -24,7 +24,7 @@ const Events = ({route, navigation}) => {
   React.useEffect(() => {
     const getDataEvent = async () => {
       try {
-        const {data} = await http().get(`/events/${id}`);
+        const {data} = await http(token).get(`/events/${id}`);
         setEvent(data.results);
       } catch (err) {
         console.log('Error', err);
@@ -33,7 +33,7 @@ const Events = ({route, navigation}) => {
     if (id) {
       getDataEvent(id);
     }
-  }, [id]);
+  }, [id, token]);
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -112,7 +112,9 @@ const Events = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={style.containerImg}>
+          <LinearGradient
+            colors={['#404040', '#404040', '#bebebe']}
+            style={style.containerImg}>
             <Text style={style.textContTitle}>{event?.title}</Text>
             <View>
               <View />
@@ -127,7 +129,7 @@ const Events = ({route, navigation}) => {
             <View>
               <Text style={style.textContLoc}>Attendees</Text>
             </View>
-          </View>
+          </LinearGradient>
           <View style={style.contDetail}>
             <View style={style.contTextDetail}>
               <Text style={style.textEvents}>Event Detail</Text>

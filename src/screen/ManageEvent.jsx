@@ -31,6 +31,16 @@ const ManageEvent = ({navigation}) => {
     navigation.navigate('Events', {id});
   };
 
+  const handleDelete = async id => {
+    try {
+      const {data} = await http(token).delete(`/events/manage/${id}`);
+      console.log(data);
+      setDataEvents(data.results);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ScrollView style={style.container}>
       <View style={style.contText}>
@@ -51,7 +61,7 @@ const ManageEvent = ({navigation}) => {
           <View>
             {dataEvents.length === 0 ? (
               <View style={style.contNoData}>
-                <Text style={style.textNt}>No Tickets Bought</Text>
+                <Text style={style.textNt}>No Events Bought</Text>
                 <Text style={style.textDesc}>
                   It appears you haven’t bought any tickets yet. Maybe try
                   searching these?
@@ -60,41 +70,49 @@ const ManageEvent = ({navigation}) => {
             ) : (
               dataEvents.map(item => {
                 return (
-                  <View key={item.id} style={style.contValueMb}>
-                    <View style={style.mbTextCont}>
-                      <View style={style.textContDay}>
-                        <Text style={style.textDay}>
-                          {moment(item.date).format('DD')}
-                        </Text>
-                        <Text>{moment(item.date).format('ddd')}</Text>
+                  <>
+                    <View
+                      key={`manageEvents-${item.id}`}
+                      style={style.contValueMb}>
+                      <View style={style.mbTextCont}>
+                        <View style={style.textContDay}>
+                          <Text style={style.textDay}>
+                            {moment(item.date).format('DD')}
+                          </Text>
+                          <Text>{moment(item.date).format('ddd')}</Text>
+                        </View>
+                      </View>
+                      <View style={style.contItemMb}>
+                        <View>
+                          <Text style={style.textTitle}>{item?.title}</Text>
+                        </View>
+                        <View style={style.contTime}>
+                          <Text>{item?.cityName}, Indonesia</Text>
+                          <Text>
+                            {moment(item.date).format('ddd, DD-MMMM-YYYY')}
+                          </Text>
+                        </View>
+                        <View style={style.touch}>
+                          <TouchableOpacity
+                            onPress={() => handlePressDetail(item.id)}>
+                            <Text style={style.textDetail}>Detail</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigation.navigate('EditArticleUser', {
+                                id: item.id,
+                              })
+                            }>
+                            <Text style={style.textDetail}>Update</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => handleDelete(item.id)}>
+                            <Text style={style.textDetail}>Delete</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
-                    <View style={style.contItemMb}>
-                      <View>
-                        <Text style={style.textTitle}>{item?.title}</Text>
-                      </View>
-                      <View style={style.contTime}>
-                        <Text>{item?.cityName}, Indonesia</Text>
-                        <Text>
-                          {moment(item.date).format('ddd, DD-MMMM-YYYY')}
-                        </Text>
-                      </View>
-                      <View style={style.touch}>
-                        <TouchableOpacity
-                          onPress={() => handlePressDetail(item.id)}>
-                          <Text style={style.textDetail}>Detail</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => handlePressDetail(item.id)}>
-                          <Text style={style.textDetail}>Update</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => handlePressDetail(item.id)}>
-                          <Text style={style.textDetail}>Delete</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
+                  </>
                 );
               })
             )}
