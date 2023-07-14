@@ -17,6 +17,7 @@ import * as Yup from 'yup';
 import Alert from '../../components/Alert';
 import {clearMessage} from '../../redux/reducers/auth';
 import Checkbox from '../../components/Checkbox';
+import SplashScreen from 'react-native-splash-screen';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Invalid email address'),
@@ -45,6 +46,10 @@ const Register = ({secureTextEntry}) => {
       navigation.replace('Login');
     }, 3000);
   }
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+  });
 
   return (
     <View style={style.container}>

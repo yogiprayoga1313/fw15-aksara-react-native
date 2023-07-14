@@ -34,8 +34,8 @@ function MyDrawer(props) {
         drawerStyle: {width: 300},
       }}>
       {/* drawerContent={props => <ProfileDrawer {...props} />}> */}
-      <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="My Booking" component={MyBooking} />
       <Drawer.Screen name="My Wishlist" component={MyWishlist} />
       <Drawer.Screen name="Manage Events" component={ManageEvent} />

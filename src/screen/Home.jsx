@@ -26,6 +26,7 @@ import Booking from './Booking';
 import CreateEvent from './CreateEvent';
 import EditEventUser from './EditArticle';
 import {Formik} from 'formik';
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -80,6 +81,10 @@ const Home = () => {
     }
     getDataEvents();
   }, [token, sortBy, sort]);
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+  });
 
   return (
     <ScrollView style={style.wrapper}>
