@@ -168,11 +168,14 @@ const style = StyleSheet.create({
   },
   scrolView: {
     marginBottom: 50,
+    // height: '100%',
   },
   containerOne: {
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    height: '100%',
+    justifyContent: 'center',
   },
   contPrice: {
     backgroundColor: 'white',

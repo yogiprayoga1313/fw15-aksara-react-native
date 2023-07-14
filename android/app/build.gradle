@@ -89,6 +89,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+         release {
+      storeFile file('Aksara.keystore')
+      storePassword '131398'
+      keyAlias 'Aksara'
+      keyPassword '131398'
+    }
     }
     buildTypes {
         debug {
@@ -97,7 +103,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -109,6 +115,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
 
     implementation 'com.google.firebase:firebase-analytics:17.3.0'
+    // implementation project(':react-native-vector-icons')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
