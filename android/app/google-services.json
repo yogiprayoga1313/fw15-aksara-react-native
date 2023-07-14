@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:945877969336:android:9f20bf84b7e40da8ad874d",
+        "mobilesdk_app_id": "1:945877969336:android:01bae7a96bed3d95ad874d",
         "android_client_info": {
-          "package_name": "com.demoapps"
+          "package_name": "net.yogi.aksara"
         }
       },
       "oauth_client": [
