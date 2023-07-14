@@ -35,23 +35,6 @@ const Events = ({route, navigation}) => {
     }
   }, [id, token]);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     const eventId = {eventId: id};
-  //     const qString = new URLSearchParams(eventId).toString();
-  //     const fetchData = async () => {
-  //       const {data} = await http(token).get(`/wishlist${qString}`);
-  //       const btnStatus = data.results;
-  //       if (btnStatus) {
-  //         setWishlistButton(true);
-  //       } else {
-  //         setWishlistButton(false);
-  //       }
-  //     };
-  //     fetchData();
-  //   }, [token, id]),
-  // );
-
   const addRemoveWishlist = async () => {
     try {
       if (wishlistButton) {
@@ -74,23 +57,6 @@ const Events = ({route, navigation}) => {
     }
   };
 
-  // const addRemoveWishlist = async () => {
-  //   try {
-  //     const eventId = {eventId: id};
-  //     const qString = new URLSearchParams(eventId).toString();
-  //     const {data} = await http(token).post('/wishlist', qString);
-  //     console.log(data);
-  //     if (wishlistButton) {
-  //       setWishlistButton(false);
-  //     } else {
-  //       setWishlistButton(true);
-  //     }
-  //   } catch (err) {
-  //     const message = err?.response?.data?.message;
-  //     if (message) {
-  //       console.log(message);
-  //     }
-  //   }
   // };
   return (
     <ScrollView style={style.container}>
@@ -112,9 +78,7 @@ const Events = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <LinearGradient
-            colors={['#404040', '#404040', '#bebebe']}
-            style={style.containerImg}>
+          <View style={style.containerImg}>
             <Text style={style.textContTitle}>{event?.title}</Text>
             <View>
               <View />
@@ -129,7 +93,7 @@ const Events = ({route, navigation}) => {
             <View>
               <Text style={style.textContLoc}>Attendees</Text>
             </View>
-          </LinearGradient>
+          </View>
           <View style={style.contDetail}>
             <View style={style.contTextDetail}>
               <Text style={style.textEvents}>Event Detail</Text>
@@ -174,7 +138,7 @@ const Events = ({route, navigation}) => {
 
 const style = StyleSheet.create({
   container: {
-    backgroundColor: 'gray',
+    // backgroundColor: 'gray',
   },
   containerImg: {
     gap: 15,
@@ -187,7 +151,7 @@ const style = StyleSheet.create({
     // justifyContent: 'center',
     // alignItems: 'center',
     width: '100%',
-    height: 730,
+    height: 700,
     objectFit: 'bg-cover',
   },
   textContTitle: {
@@ -227,7 +191,8 @@ const style = StyleSheet.create({
     borderTopLeftRadius: 30,
     padding: 30,
     marginBottom: 70,
-    height: 340,
+    height: '100%',
+    justifyContent: 'center',
   },
   boxOut: {
     flexDirection: 'row',
