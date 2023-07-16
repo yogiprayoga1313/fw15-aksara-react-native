@@ -63,10 +63,6 @@ const ChangePassword = ({secureTextEntry}) => {
     setTimeout(() => setErrorMessage(''), 2500);
   }
 
-  const handlePressEvent = () => {
-    navigation.navigate('Profile');
-  };
-
   if (errorMessage) {
     setTimeout(() => {
       dispatch(clearMessage());
