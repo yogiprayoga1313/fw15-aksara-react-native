@@ -37,7 +37,7 @@ const Payment = ({route, navigation}) => {
   };
 
   return (
-    <View style={style.container}>
+    <ScrollView style={style.container}>
       <View style={style.contCheck}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <IconPass name="arrow-left" size={35} color="white" />
@@ -158,7 +158,7 @@ const Payment = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -281,7 +281,7 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingTop: 40,
+    paddingTop: 70,
     paddingHorizontal: 30,
     gap: 20,
   },
@@ -384,7 +384,7 @@ const style = StyleSheet.create({
   checkOut: {
     backgroundColor: 'white',
     flexDirection: 'row',
-    padding: 20,
+    padding: 30,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     gap: 35,

@@ -150,14 +150,14 @@ const Register = ({secureTextEntry}) => {
               )}
             </View>
             <View style={style.chechbox}>
-              <Checkbox
+              {/* <Checkbox
                 disabled={false}
                 value={values.termAndCondition}
                 onValueChange={value =>
                   setFieldValue('termAndCondition', value)
                 }
-              />
-              <Text style={style.text2}>Accept terms and condition</Text>
+              /> */}
+              {/* <Text style={style.text2}>Accept terms and condition</Text> */}
             </View>
             {errors.termAndCondition && touched.termAndCondition && (
               <Text style={style.errorsText}>{errors.termAndCondition}</Text>

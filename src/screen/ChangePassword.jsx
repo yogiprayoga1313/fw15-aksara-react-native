@@ -213,6 +213,7 @@ const style = StyleSheet.create({
     paddingVertical: 100,
     paddingHorizontal: 30,
     gap: 20,
+    height: 700,
   },
   textEditCp: {
     fontSize: 20,

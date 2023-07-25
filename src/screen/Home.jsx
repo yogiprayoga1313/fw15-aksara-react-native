@@ -136,7 +136,8 @@ const Home = () => {
                           {moment(event.date).format('ddd, DD-MMMM-YYYY')}
                         </Text>
                         <Text style={style.textContaninerNew}>
-                          {event.title}
+                          {event.title.split(' ').slice(0, 10).join(' ')}
+                          {event.title.split(' ').length > 15 ? '...' : ''}
                         </Text>
                         <TouchableOpacity
                           style={style.arrow}
@@ -273,7 +274,7 @@ const HomeStack = () => {
 
 const style = StyleSheet.create({
   filterStyle: {
-    marginLeft: 90,
+    marginLeft: 70,
     backgroundColor: 'white',
     width: 50,
     height: 50,
@@ -339,6 +340,8 @@ const style = StyleSheet.create({
     position: 'absolute',
     top: 30,
     left: 10,
+    width: 230,
+    height: 30,
   },
   textNew: {
     fontSize: 16,
