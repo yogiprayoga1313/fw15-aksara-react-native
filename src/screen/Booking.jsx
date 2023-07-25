@@ -86,7 +86,7 @@ const Booking = ({route, navigation}) => {
         <View style={style.containerOne}>
           <View style={style.contPrice}>
             <View style={style.sectCont}>
-              <Text>foto</Text>
+              <Text style={style.cardText}>No Card</Text>
             </View>
             <View style={style.contOut}>
               <View style={style.contOne}>
@@ -203,6 +203,11 @@ const style = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 30,
     borderRadius: 30,
+  },
+  cardText: {
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 26,
   },
   contOut: {
     paddingVertical: 20,

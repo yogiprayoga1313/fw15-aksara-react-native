@@ -135,6 +135,7 @@ const style = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 30,
     gap: 15,
+    height: 700,
   },
   contProfileName: {
     justifyContent: 'center',

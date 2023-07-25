@@ -107,6 +107,8 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     padding: 30,
     gap: 50,
+    // width: '100%',
+    height: 700,
   },
   month: {
     backgroundColor: 'rgba(234, 241, 255, 1)',
