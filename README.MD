@@ -1,6 +1,6 @@
 
 # Archive
-![Logo Archive]()
+![Logo Archive](src/asset/aksara-logo.png)
 
 #About The Project
 
@@ -33,18 +33,15 @@ Web application For Reservation tickets and Create events
 
 # How to use
 
-##Register Page
-![Register]()
-
 ##Login Page
-![Login]()
+![Login](src/asset/login.png)
 
 ##Home Page
-![Home]()
-
-##Events Details
-![Events Details]()
+![Home]src/asset/home.png()
 
 ##Pofile Page
-![Profile]()
+![Profile](src/asset/edit-profile.png)
+
+##Create events
+![Create Events](src/asset/creaete-event.png)
 
