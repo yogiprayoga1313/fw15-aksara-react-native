@@ -35,7 +35,7 @@ const Home = () => {
   const [events, setEvents] = React.useState([]);
   const deviceToken = useSelector(state => state.deviceToken.data);
   const token = useSelector(state => state.auth.token);
-  const [sort, setSort] = React.useState('ASC');
+  const [sort, setSort] = React.useState('DESC');
   const [sortBy, setSortBy] = React.useState('title');
   const [searchText, setSearchText] = React.useState('');
 
